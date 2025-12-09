@@ -61,31 +61,39 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [transactions, setTransactions] = useState<Transaction[]>(INITIAL_TRANSACTIONS);
   const [bookings, setBookings] = useState<Booking[]>(INITIAL_BOOKINGS);
 
-  // Load user from local storage on mount (simulate session)
+  // Load user from local storage on mount (SAFE LOADING)
   useEffect(() => {
-    const storedUser = localStorage.getItem('viet_journey_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    try {
+      const storedUser = localStorage.getItem('viet_journey_user');
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        if (parsedUser && parsedUser.id) {
+            setUser(parsedUser);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to load user from local storage", error);
+      // Optional: Clear corrupted data
+      localStorage.removeItem('viet_journey_user');
     }
   }, []);
 
   const login = (email: string, name?: string) => {
-    // If name is provided (Registration), use it. 
-    // If login with just email, use existing mock name or extract from email.
-    const displayName = name || email.split('@')[0];
-    
-    // In a real app, we would fetch the user data. Here we mock it.
-    // If it's a "new" registration (name provided), we reset balance to 0 for realism, else keep mock balance.
-    const initialBalance = name ? 0 : 5000000;
+    try {
+        const displayName = name || email.split('@')[0];
+        const initialBalance = name ? 0 : 5000000;
 
-    const newUser = { 
-        ...MOCK_USER, 
-        email, 
-        name: displayName,
-        walletBalance: initialBalance
-    };
-    setUser(newUser);
-    localStorage.setItem('viet_journey_user', JSON.stringify(newUser));
+        const newUser = { 
+            ...MOCK_USER, 
+            email, 
+            name: displayName,
+            walletBalance: initialBalance
+        };
+        setUser(newUser);
+        localStorage.setItem('viet_journey_user', JSON.stringify(newUser));
+    } catch (e) {
+        console.error("Login error", e);
+    }
   };
 
   const logout = () => {
