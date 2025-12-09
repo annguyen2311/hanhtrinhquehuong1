@@ -1,0 +1,7 @@
+{
+  "name": "Hành Trình Việt - Đường Về Nhà",
+  "description": "Nền tảng du lịch AI giúp bạn tìm đường về với quê hương. Đặt vé máy bay, xe khách, khách sạn và khám phá vẻ đẹp Việt Nam.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
