@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelGenie AI - Next Gen Travel</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-gradient-animate {
+            background: linear-gradient(-45deg, #1e1b4b, #312e81, #0f172a, #4c1d95);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Glassmorphism Utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(139, 92, 246, 0.5);
+            box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.3);
+        }
+
+        .glass-input {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.2s;
+        }
+
+        .glass-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b; 
+        }
+
+        /* Utilities */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Loading Spinner */
+        .loader {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            border-top: 3px solid #8b5cf6;
+            width: 24px;
+            height: 24px;
+            -webkit-animation: spin 1s linear infinite; /* Safari */
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background -->
+    <div class="bg-gradient-animate"></div>
+
+    <!-- API Key Modal (Simulated Environment) -->
+    <div id="api-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="glass w-full max-w-md p-8 rounded-2xl shadow-2xl border-t border-white/10">
+            <div class="flex flex-col items-center mb-6">
+                <div class="w-12 h-12 bg-gradient-to-tr from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-4 shadow-lg shadow-purple-500/30">
+                    <i data-lucide="key" class="w-6 h-6 text-white"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-center">Setup Access</h2>
+                <p class="text-slate-400 text-center mt-2 text-sm">Enter your Gemini API Key to enable AI features.</p>
+            </div>
+            <input type="password" id="api-key-input" placeholder="Paste your API Key here (starts with AIza...)" 
+                class="w-full glass-input px-4 py-3 rounded-xl mb-4 text-sm placeholder-slate-500">
+            <button id="save-api-key" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold py-3 px-6 rounded-xl transition-all shadow-lg shadow-indigo-500/25">
+                Start Exploring
+            </button>
+            <p class="text-xs text-slate-500 text-center mt-4">Key is stored in browser memory only.</p>
+        </div>
+    </div>
+
+    <!-- App Container -->
+    <div id="app" class="relative min-h-screen flex flex-col hidden">
+        
+        <!-- Navbar -->
+        <nav class="sticky top-0 z-40 w-full glass border-b border-white/5">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <!-- Logo -->
+                    <div class="flex items-center gap-2 cursor-pointer" onclick="navigateTo('home')">
+                        <div class="w-8 h-8 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-lg flex items-center justify-center">
+                            <i data-lucide="plane" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <span class="font-bold text-xl tracking-tight">TravelGenie</span>
+                    </div>
+
+                    <!-- Desktop Menu -->
+                    <div class="hidden md:flex items-center space-x-8">
+                        <a href="#" onclick="navigateTo('home')" class="nav-link text-sm font-medium text-white hover:text-cyan-400 transition-colors">Find Trip</a>
+                        <a href="#" onclick="navigateTo('chat')" class="nav-link text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors">AI Assistant</a>
+                        <a href="#" onclick="navigateTo('profile')" class="nav-link text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors">Profile</a>
+                    </div>
+
+                    <!-- Mobile Menu Button & User -->
+                    <div class="flex items-center gap-4">
+                        <div id="user-indicator" class="hidden md:flex items-center gap-2 px-3 py-1.5 glass rounded-full border border-white/10">
+                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span class="text-xs font-medium text-slate-300">Online</span>
+                        </div>
+                        <button class="md:hidden text-slate-300 hover:text-white">
+                            <i data-lucide="menu" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow relative">
+            
+            <!-- VIEW: HOME (Search) -->
+            <section id="view-home" class="view-section px-4 pt-10 pb-20">
+                <div class="max-w-4xl mx-auto text-center mb-12">
+                    <h1 class="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-purple-300 to-pink-300">
+                        Where will you go next?
+                    </h1>
+                    <p class="text-lg text-slate-400 max-w-2xl mx-auto">
+                        AI-powered real-time search for flights, trains, buses, and hotels. Just ask, and we'll find the best deals.
+                    </p>
+                </div>
+
+                <!-- Search Box -->
+                <div class="max-w-5xl mx-auto glass p-6 md:p-8 rounded-3xl shadow-2xl border border-white/10 relative overflow-hidden">
+                    <!-- Glow effect behind -->
+                    <div class="absolute -top-20 -right-20 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                    <form id="search-form" class="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-4">
+                        
+                        <!-- Origin -->
+                        <div class="md:col-span-3 group">
+                            <label class="block text-xs font-medium text-slate-400 mb-1 ml-1">From</label>
+                            <div class="relative">
+                                <i data-lucide="map-pin" class="absolute left-3 top-3 w-5 h-5 text-slate-500 group-focus-within:text-cyan-400 transition-colors"></i>
+                                <input type="text" id="input-origin" placeholder="City or Airport" required
+                                    class="w-full glass-input pl-10 pr-4 py-3 rounded-xl text-sm focus:ring-0">
+                            </div>
+                        </div>
+
+                        <!-- Destination -->
+                        <div class="md:col-span-3 group">
+                            <label class="block text-xs font-medium text-slate-400 mb-1 ml-1">To</label>
+                            <div class="relative">
+                                <i data-lucide="navigation" class="absolute left-3 top-3 w-5 h-5 text-slate-500 group-focus-within:text-purple-400 transition-colors"></i>
+                                <input type="text" id="input-destination" placeholder="Where to?" required
+                                    class="w-full glass-input pl-10 pr-4 py-3 rounded-xl text-sm focus:ring-0">
+                            </div>
+                        </div>
+
+                        <!-- Date -->
+                        <div class="md:col-span-2 group">
+                            <label class="block text-xs font-medium text-slate-400 mb-1 ml-1">Date</label>
+                            <div class="relative">
+                                <input type="date" id="input-date" required
+                                    class="w-full glass-input px-4 py-3 rounded-xl text-sm focus:ring-0 appearance-none text-slate-300">
+                            </div>
+                        </div>
+
+                        <!-- Type -->
+                        <div class="md:col-span-2 group">
+                            <label class="block text-xs font-medium text-slate-400 mb-1 ml-1">Type</label>
+                            <div class="relative">
+                                <i data-lucide="layers" class="absolute left-3 top-3 w-5 h-5 text-slate-500 group-focus-within:text-pink-400 transition-colors z-10"></i>
+                                <select id="input-type" class="w-full glass-input pl-10 pr-4 py-3 rounded-xl text-sm focus:ring-0 appearance-none cursor-pointer relative z-0">
+                                    <option value="Flight" class="bg-slate-800">Flight</option>
+                                    <option value="Train" class="bg-slate-800">Train</option>
+                                    <option value="Bus" class="bg-slate-800">Bus</option>
+                                    <option value="Hotel" class="bg-slate-800">Hotel</option>
+                                </select>
+                                <i data-lucide="chevron-down" class="absolute right-3 top-3 w-4 h-4 text-slate-500 pointer-events-none"></i>
+                            </div>
+                        </div>
+
+                        <!-- Button -->
+                        <div class="md:col-span-2 flex items-end">
+                            <button type="submit" id="btn-search" 
+                                class="w-full h-[46px] bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold rounded-xl transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2 group">
+                                <span class="group-hover:hidden">Search</span>
+                                <span class="hidden group-hover:inline">Let's Go</span>
+                                <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Features Grid (Decorative) -->
+                <div class="max-w-6xl mx-auto mt-20 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="glass p-6 rounded-2xl border border-white/5">
+                        <div class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center mb-4 text-purple-400">
+                            <i data-lucide="zap" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2">Real-time AI</h3>
+                        <p class="text-slate-400 text-sm">Our Gemini agent scans the web live to find current schedules and prices.</p>
+                    </div>
+                    <div class="glass p-6 rounded-2xl border border-white/5">
+                        <div class="w-10 h-10 rounded-full bg-pink-500/20 flex items-center justify-center mb-4 text-pink-400">
+                            <i data-lucide="heart" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2">Personalized</h3>
+                        <p class="text-slate-400 text-sm">We learn your preferences to suggest the most comfortable trips.</p>
+                    </div>
+                    <div class="glass p-6 rounded-2xl border border-white/5">
+                        <div class="w-10 h-10 rounded-full bg-cyan-500/20 flex items-center justify-center mb-4 text-cyan-400">
+                            <i data-lucide="shield-check" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2">Verified Sources</h3>
+                        <p class="text-slate-400 text-sm">Transparent data sources linked directly to booking providers.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: LOADING -->
+            <section id="view-loading" class="view-section hidden absolute inset-0 flex flex-col items-center justify-center z-50 bg-slate-900/50 backdrop-blur-sm min-h-[500px]">
+                <div class="relative">
+                    <div class="w-20 h-20 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin"></div>
+                    <div class="absolute top-0 left-0 w-20 h-20 border-4 border-purple-500/30 border-b-purple-500 rounded-full animate-spin" style="animation-direction: reverse; animation-duration: 1.5s;"></div>
+                    <i data-lucide="plane" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-white animate-pulse"></i>
+                </div>
+                <h3 class="mt-8 text-xl font-medium text-white">Scanning the skies...</h3>
+                <p id="loading-text" class="text-slate-400 mt-2 text-sm">Consulting Gemini AI for best routes</p>
+            </section>
+
+            <!-- VIEW: SEARCH RESULTS -->
+            <section id="view-results" class="view-section hidden px-4 py-8">
+                <div class="max-w-6xl mx-auto">
+                    <!-- Results Header -->
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                        <div>
+                            <button onclick="navigateTo('home')" class="flex items-center text-slate-400 hover:text-white mb-2 transition-colors">
+                                <i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> Back to Search
+                            </button>
+                            <h2 class="text-2xl font-bold flex items-center gap-2">
+                                <span id="res-origin" class="text-slate-300">Origin</span>
+                                <i data-lucide="arrow-right" class="w-5 h-5 text-slate-500"></i>
+                                <span id="res-destination" class="text-cyan-400">Destination</span>
+                            </h2>
+                            <p class="text-sm text-slate-400 mt-1 flex items-center gap-2">
+                                <i data-lucide="calendar" class="w-3 h-3"></i> <span id="res-date">Date</span>
+                                <span class="mx-1">•</span>
+                                <span id="res-count">0 results found</span>
+                            </p>
+                        </div>
+                        
+                        <div class="flex gap-2">
+                            <button class="px-4 py-2 glass rounded-lg text-sm hover:bg-white/5 transition-colors">Cheapest</button>
+                            <button class="px-4 py-2 bg-white/10 text-white rounded-lg text-sm border border-cyan-500/50">Fastest</button>
+                        </div>
+                    </div>
+
+                    <!-- Results Grid -->
+                    <div id="results-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Cards will be injected here via JS -->
+                    </div>
+
+                    <!-- Data Sources -->
+                    <div class="mt-12 p-6 glass rounded-2xl border border-white/5">
+                        <h4 class="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+                            <i data-lucide="link" class="w-4 h-4"></i> Data Sources
+                        </h4>
+                        <div id="sources-list" class="flex flex-wrap gap-2 text-xs text-slate-500">
+                            <!-- Links injected here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: AI CHAT -->
+            <section id="view-chat" class="view-section hidden h-[calc(100vh-64px)] flex flex-col">
+                <div class="flex-1 overflow-y-auto p-4 space-y-4 max-w-4xl mx-auto w-full" id="chat-messages">
+                    <!-- Welcome Message -->
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-500 flex-shrink-0 flex items-center justify-center">
+                            <i data-lucide="bot" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <div class="glass p-4 rounded-2xl rounded-tl-none max-w-[80%] text-sm text-slate-200">
+                            Hello! I'm your travel assistant. Ask me about destination tips, visa requirements, or packing lists for your upcoming trip!
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="p-4 border-t border-white/10 glass bg-slate-900/80">
+                    <form id="chat-form" class="max-w-4xl mx-auto relative flex gap-2">
+                        <input type="text" id="chat-input" placeholder="Ask Gemini..." 
+                            class="flex-1 glass-input px-4 py-3 rounded-xl focus:ring-0 text-sm">
+                        <button type="submit" class="bg-cyan-600 hover:bg-cyan-500 text-white p-3 rounded-xl transition-colors">
+                            <i data-lucide="send" class="w-5 h-5"></i>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- VIEW: PROFILE (MOCK) -->
+            <section id="view-profile" class="view-section hidden px-4 py-10">
+                <div class="max-w-2xl mx-auto glass rounded-3xl p-8 border border-white/10 text-center">
+                    <div class="w-24 h-24 bg-gradient-to-br from-pink-500 to-orange-400 rounded-full mx-auto mb-4 p-1">
+                        <img src="https://picsum.photos/200" alt="Avatar" class="w-full h-full rounded-full border-4 border-slate-900 object-cover">
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">Alex Traveler</h2>
+                    <p class="text-slate-400 text-sm mb-6">alex.explorer@example.com</p>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-left mb-8">
+                        <div class="glass p-4 rounded-xl">
+                            <p class="text-xs text-slate-500 uppercase">Total Trips</p>
+                            <p class="text-2xl font-bold text-cyan-400">12</p>
+                        </div>
+                        <div class="glass p-4 rounded-xl">
+                            <p class="text-xs text-slate-500 uppercase">Saved Places</p>
+                            <p class="text-2xl font-bold text-purple-400">8</p>
+                        </div>
+                    </div>
+                    
+                    <button class="w-full py-3 glass rounded-xl text-red-400 hover:bg-red-500/10 transition-colors text-sm font-medium">
+                        Log Out (Mock)
+                    </button>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MAIN SCRIPT -->
+    <script type="module">
+        import { GoogleGenAI } from "https://esm.run/@google/genai";
+
+        // --- CONSTANTS & CONFIG ---
+        const CITY_IMAGES = {
+            "Hanoi": "https://images.unsplash.com/photo-1555921015-5532091f6026?auto=format&fit=crop&w=800&q=80",
+            "Ha Noi": "https://images.unsplash.com/photo-1555921015-5532091f6026?auto=format&fit=crop&w=800&q=80",
+            "Ho Chi Minh": "https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=800&q=80",
+            "Saigon": "https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=800&q=80",
+            "Da Nang": "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=800&q=80",
+            "Danang": "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=800&q=80",
+            "Sapa": "https://images.unsplash.com/photo-1534057357497-69502b48995a?auto=format&fit=crop&w=800&q=80",
+            "Hoi An": "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=800&q=80",
+            "Phu Quoc": "https://images.unsplash.com/photo-1588665046200-c943891d4576?auto=format&fit=crop&w=800&q=80",
+            "Ha Long": "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=800&q=80",
+            "Halong": "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=800&q=80",
+            "Nha Trang": "https://images.unsplash.com/photo-1565620958189-e962657e3352?auto=format&fit=crop&w=800&q=80",
+            "default": "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&q=80"
+        };
+
+        // --- STATE MANAGEMENT ---
+        const state = {
+            apiKey: '',
+            currentView: 'home',
+            searchData: null,
+            searchResults: []
+        };
+
+        // --- DOM ELEMENTS ---
+        const elements = {
+            app: document.getElementById('app'),
+            modal: document.getElementById('api-modal'),
+            apiKeyInput: document.getElementById('api-key-input'),
+            saveKeyBtn: document.getElementById('save-api-key'),
+            views: {
+                home: document.getElementById('view-home'),
+                results: document.getElementById('view-results'),
+                chat: document.getElementById('view-chat'),
+                profile: document.getElementById('view-profile'),
+                loading: document.getElementById('view-loading')
+            },
+            searchForm: document.getElementById('search-form'),
+            resultsContainer: document.getElementById('results-container'),
+            chatForm: document.getElementById('chat-form'),
+            chatInput: document.getElementById('chat-input'),
+            chatMessages: document.getElementById('chat-messages'),
+            resOrigin: document.getElementById('res-origin'),
+            resDest: document.getElementById('res-destination'),
+            resDate: document.getElementById('res-date'),
+            resCount: document.getElementById('res-count'),
+            sourcesList: document.getElementById('sources-list')
+        };
+
+        // --- INITIALIZATION ---
+        function init() {
+            lucide.createIcons();
+            
+            // Check for API key (Simulate local storage check)
+            // Ideally, we don't store API keys in LocalStorage in production, but for a demo app:
+            if (state.apiKey) {
+                elements.modal.classList.add('hidden');
+                elements.app.classList.remove('hidden');
+            } else {
+                elements.modal.classList.remove('hidden');
+            }
+
+            // Set default date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('input-date').valueAsDate = tomorrow;
+        }
+
+        // --- NAVIGATION ---
+        window.navigateTo = (viewName) => {
+            // Hide all views
+            Object.values(elements.views).forEach(el => {
+                if(!el.id.includes('loading')) el.classList.add('hidden');
+            });
+            
+            // Show target view
+            if (elements.views[viewName]) {
+                elements.views[viewName].classList.remove('hidden');
+                state.currentView = viewName;
+            }
+            window.scrollTo(0, 0);
+        };
+
+        // --- API KEY HANDLING ---
+        elements.saveKeyBtn.addEventListener('click', () => {
+            const key = elements.apiKeyInput.value.trim();
+            if (key.length > 10) {
+                state.apiKey = key;
+                elements.modal.classList.add('hidden');
+                elements.app.classList.remove('hidden');
+            } else {
+                alert("Please enter a valid API Key");
+            }
+        });
+
+        // --- SEARCH LOGIC (GENAI) ---
+        elements.searchForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const origin = document.getElementById('input-origin').value;
+            const destination = document.getElementById('input-destination').value;
+            const date = document.getElementById('input-date').value;
+            const type = document.getElementById('input-type').value;
+
+            state.searchData = { origin, destination, date, type };
+
+            // UI Updates
+            elements.views.loading.classList.remove('hidden');
+            document.getElementById('loading-text').innerText = `Searching for ${type}s to ${destination}...`;
+
+            try {
+                const results = await searchRealTimeTickets(origin, destination, date, type);
+                renderResults(results, destination);
+                navigateTo('results');
+            } catch (error) {
+                console.error("Search failed:", error);
+                alert("AI Search failed. Please check your API Key or try again.");
+                navigateTo('home');
+            } finally {
+                elements.views.loading.classList.add('hidden');
+            }
+        });
+
+        async function searchRealTimeTickets(from, to, date, type) {
+            const ai = new GoogleGenAI({ apiKey: state.apiKey });
+            
+            const prompt = `
+                Find real-time ${type} tickets/options from ${from} to ${to} on ${date}.
+                Search for at least 4 distinct options with different prices or times.
+                
+                Strictly return ONLY a JSON array as a string. Do not use Markdown code blocks.
+                Structure:
+                [
+                    {
+                        "provider": "Airline/Company Name",
+                        "departureTime": "HH:MM",
+                        "arrivalTime": "HH:MM",
+                        "price": "Price string (e.g. 1,200,000 VND)",
+                        "duration": "e.g. 2h 30m",
+                        "rating": "4.5",
+                        "bookingLink": "Link or domain"
+                    }
+                ]
+            `;
+
+            // Use the correct ai.models.generateContent API
+            const response = await ai.models.generateContent({
+                model: "gemini-2.5-flash",
+                contents: prompt,
+                config: {
+                    tools: [{ googleSearch: {} }]
+                }
+            });
+
+            // Access text property directly
+            const text = response.text;
+            
+            // Extract grounding metadata for sources
+            const groundingMetadata = response.candidates?.[0]?.groundingMetadata;
+            renderSources(groundingMetadata);
+
+            // Clean and Parse JSON
+            try {
+                // Remove markdown backticks if present
+                const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+                return JSON.parse(cleanText);
+            } catch (e) {
+                console.error("JSON Parse Error", e);
+                // Fallback mock data if AI hallucinates format
+                return [
+                    {
+                        provider: "AI Parse Error - Fallback Data",
+                        departureTime: "08:00",
+                        arrivalTime: "10:00",
+                        price: "Contact Provider",
+                        duration: "2h",
+                        rating: "4.0",
+                        bookingLink: "#"
+                    }
+                ];
+            }
+        }
+
+        // --- RENDERING RESULTS ---
+        function renderResults(tickets, destination) {
+            elements.resultsContainer.innerHTML = '';
+            
+            // Update Header Info
+            elements.resOrigin.textContent = state.searchData.origin;
+            elements.resDest.textContent = state.searchData.destination;
+            elements.resDate.textContent = state.searchData.date;
+            elements.resCount.textContent = `${tickets.length} options found`;
+
+            // Determine Image
+            let bgImage = CITY_IMAGES['default'];
+            for (const city in CITY_IMAGES) {
+                if (destination.toLowerCase().includes(city.toLowerCase())) {
+                    bgImage = CITY_IMAGES[city];
+                    break;
+                }
+            }
+
+            tickets.forEach((ticket, index) => {
+                const card = document.createElement('div');
+                card.className = 'glass-card rounded-2xl overflow-hidden group animate-fade-in-up';
+                card.style.animationDelay = `${index * 100}ms`;
+
+                card.innerHTML = `
+                    <div class="h-32 bg-cover bg-center relative" style="background-image: url('${bgImage}')">
+                        <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors"></div>
+                        <div class="absolute bottom-3 left-4">
+                            <h3 class="text-lg font-bold text-white shadow-black drop-shadow-md">${ticket.provider}</h3>
+                        </div>
+                        <div class="absolute top-3 right-3 bg-white/20 backdrop-blur-md px-2 py-1 rounded-lg text-xs font-bold text-white flex items-center gap-1 border border-white/20">
+                            <i data-lucide="star" class="w-3 h-3 fill-yellow-400 text-yellow-400"></i> ${ticket.rating || 'N/A'}
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="text-center">
+                                <p class="text-lg font-bold text-white">${ticket.departureTime}</p>
+                                <p class="text-xs text-slate-400">${state.searchData.origin}</p>
+                            </div>
+                            <div class="flex flex-col items-center px-4">
+                                <p class="text-xs text-slate-500 mb-1">${ticket.duration}</p>
+                                <div class="w-20 h-[1px] bg-slate-600 relative">
+                                    <div class="absolute -top-1 right-0 w-2 h-2 rounded-full bg-slate-600"></div>
+                                    <div class="absolute -top-1 left-0 w-2 h-2 rounded-full bg-slate-600"></div>
+                                </div>
+                                <i data-lucide="${getIconForType(state.searchData.type)}" class="w-4 h-4 text-cyan-500 mt-1"></i>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-lg font-bold text-white">${ticket.arrivalTime}</p>
+                                <p class="text-xs text-slate-400">${state.searchData.destination}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between pt-4 border-t border-white/5">
+                            <div>
+                                <p class="text-xs text-slate-400">Total Price</p>
+                                <p class="text-xl font-bold text-cyan-300">${ticket.price}</p>
+                            </div>
+                            <a href="${ticket.bookingLink}" target="_blank" class="px-4 py-2 bg-white text-slate-900 font-bold rounded-lg text-sm hover:bg-cyan-100 transition-colors">
+                                Book Now
+                            </a>
+                        </div>
+                    </div>
+                `;
+                elements.resultsContainer.appendChild(card);
+            });
+
+            // Re-initialize icons for new elements
+            lucide.createIcons();
+        }
+
+        function renderSources(metadata) {
+            elements.sourcesList.innerHTML = '';
+            if (!metadata || !metadata.groundingChunks) return;
+
+            const chunks = metadata.groundingChunks;
+            const uniqueLinks = new Set();
+
+            chunks.forEach(chunk => {
+                if (chunk.web && chunk.web.uri) {
+                    uniqueLinks.add(chunk.web.uri);
+                }
+            });
+
+            if (uniqueLinks.size === 0) {
+                elements.sourcesList.innerHTML = '<span>No direct sources returned by AI.</span>';
+                return;
+            }
+
+            uniqueLinks.forEach(uri => {
+                const domain = new URL(uri).hostname.replace('www.', '');
+                const link = document.createElement('a');
+                link.href = uri;
+                link.target = "_blank";
+                link.className = "px-2 py-1 bg-white/5 hover:bg-white/10 rounded border border-white/5 transition-colors";
+                link.textContent = domain;
+                elements.sourcesList.appendChild(link);
+            });
+        }
+
+        function getIconForType(type) {
+            switch(type) {
+                case 'Flight': return 'plane';
+                case 'Train': return 'train';
+                case 'Bus': return 'bus';
+                case 'Hotel': return 'bed';
+                default: return 'arrow-right';
+            }
+        }
+
+        // --- CHAT LOGIC ---
+        elements.chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = elements.chatInput.value.trim();
+            if (!message) return;
+
+            // Render User Message
+            addChatMessage(message, true);
+            elements.chatInput.value = '';
+
+            try {
+                // Call Gemini for Chat
+                const ai = new GoogleGenAI({ apiKey: state.apiKey });
+                
+                const prompt = `You are a helpful travel assistant. Keep answers concise and related to travel. 
+                                User asks: ${message}`;
+                
+                // Use the correct ai.models.generateContent API
+                const response = await ai.models.generateContent({
+                    model: "gemini-2.5-flash",
+                    contents: prompt
+                });
+                
+                // Access text property directly
+                const reply = response.text;
+
+                addChatMessage(reply, false);
+
+            } catch (error) {
+                addChatMessage("Sorry, I'm having trouble connecting right now.", false);
+                console.error("Chat Error", error);
+            }
+        });
+
+        function addChatMessage(text, isUser) {
+            const wrapper = document.createElement('div');
+            wrapper.className = `flex w-full ${isUser ? 'justify-end' : 'justify-start'}`;
+            
+            const bubble = document.createElement('div');
+            bubble.className = isUser 
+                ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-4 rounded-2xl rounded-tr-none max-w-[80%] text-sm shadow-lg'
+                : 'glass p-4 rounded-2xl rounded-tl-none max-w-[80%] text-sm text-slate-200';
+            
+            bubble.textContent = text;
+            wrapper.appendChild(bubble);
+            
+            elements.chatMessages.appendChild(wrapper);
+            elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+        }
+
+        // --- ANIMATION STYLES (Dynamic) ---
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = `
+            .animate-fade-in-up {
+                animation: fadeInUp 0.5s ease-out forwards;
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            @keyframes fadeInUp {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+
+        // Run Init
+        init();
+
+    </script>
+</body>
+</html>
