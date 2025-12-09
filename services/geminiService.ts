@@ -1,7 +1,20 @@
 import { GoogleGenAI } from "@google/genai";
 import { ChatMessage } from "../types";
 
-const apiKey = process.env.API_KEY || '';
+// SAFELY access process.env to prevent "process is not defined" crash in browser
+const getApiKey = () => {
+  try {
+    // Check if process is defined (Node.js/Webpack/specific bundlers)
+    if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
+      return process.env.API_KEY;
+    }
+  } catch (e) {
+    console.warn("Error accessing process.env", e);
+  }
+  return '';
+};
+
+const apiKey = getApiKey();
 const ai = new GoogleGenAI({ apiKey });
 
 export const generateTripAdvice = async (
@@ -10,6 +23,13 @@ export const generateTripAdvice = async (
   userLocation?: { lat: number; lng: number }
 ): Promise<{ text: string; sources: Array<{ title: string; uri: string }> }> => {
   try {
+    if (!apiKey) {
+      return {
+        text: "Vui lòng cấu hình API KEY để sử dụng tính năng này.",
+        sources: []
+      }
+    }
+
     const modelId = 'gemini-2.5-flash';
     
     // Prepare tools
