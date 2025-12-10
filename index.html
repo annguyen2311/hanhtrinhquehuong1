@@ -4,1014 +4,993 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TravelGenie AI - Du Lịch Thông Minh</title>
-    
-    <!-- Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <!-- Custom Styles -->
     <style>
         body {
             font-family: 'Outfit', sans-serif;
-            background-color: #0f172a; /* Slate 900 */
-            color: #ffffff;
+            background: #050511;
+            color: #fff;
             overflow-x: hidden;
         }
 
         /* Animated Background */
-        .bg-gradient-animate {
-            background: linear-gradient(-45deg, #1e1b4b, #312e81, #0f172a, #4c1d95);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
+        .bg-cyber {
+            background: radial-gradient(circle at 50% 50%, #1a1a40 0%, #050511 100%);
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Glassmorphism Utilities */
-        .glass {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            inset: 0;
+            z-index: -2;
         }
         
-        .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            animation: float 20s infinite ease-in-out;
+        }
+        .orb-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: rgba(139, 92, 246, 0.15); animation-delay: 0s; }
+        .orb-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: rgba(6, 182, 212, 0.15); animation-delay: -5s; }
+        .orb-3 { top: 40%; left: 40%; width: 30vw; height: 30vw; background: rgba(236, 72, 153, 0.1); animation-delay: -10s; }
+
+        @keyframes float { 0% { transform: translate(0, 0); } 33% { transform: translate(30px, -50px); } 66% { transform: translate(-20px, 20px); } 100% { transform: translate(0, 0); } }
+
+        /* Glassmorphism & Neon */
+        .glass {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         }
 
-        .glass-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(139, 92, 246, 0.5);
-            box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.3);
+        .glass-panel {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .glass-input {
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: white;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .glass-input:focus {
             outline: none;
-            border-color: #8b5cf6;
-            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
-            background: rgba(15, 23, 42, 0.8);
+            border-color: #a855f7;
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
         }
 
-        /* Autocomplete Dropdown */
-        .autocomplete-items {
+        .neon-border {
+            position: relative;
+        }
+        .neon-border::after {
+            content: '';
             position: absolute;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-bottom: none;
-            border-top: none;
-            z-index: 99;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 0 0 12px 12px;
-            max-height: 200px;
-            overflow-y: auto;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            inset: -1px;
+            background: linear-gradient(45deg, #06b6d4, #a855f7, #ec4899);
+            z-index: -1;
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
-        .autocomplete-item {
-            padding: 10px;
-            cursor: pointer;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 0.875rem;
-            color: #cbd5e1;
-        }
-        .autocomplete-item:hover {
-            background-color: rgba(139, 92, 246, 0.2);
-            color: #ffffff;
-        }
-        .autocomplete-active {
-            background-color: rgba(139, 92, 246, 0.4) !important;
-            color: #ffffff;
+        .neon-border:hover::after, .neon-border:focus-within::after {
+            opacity: 1;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0f172a; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #475569; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #64748b; 
-        }
+        /* Animations */
+        .fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .spin { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .pulse-glow { animation: pulseGlow 2s infinite; }
+        @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(168, 85, 247, 0); } 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0); } }
 
         /* Utilities */
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
+        .text-gradient {
+            background: linear-gradient(to right, #22d3ee, #e879f9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
         }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        .btn-primary:hover::before { left: 100%; }
 
-        /* Loading Spinner */
-        .loader {
-            border: 3px solid rgba(255,255,255,0.1);
-            border-radius: 50%;
-            border-top: 3px solid #8b5cf6;
-            width: 24px;
-            height: 24px;
-            -webkit-animation: spin 1s linear infinite; /* Safari */
-            animation: spin 1s linear infinite;
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050511; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            z-index: 99;
+            top: 100%; left: 0; right: 0;
+            background: rgba(10, 10, 25, 0.95);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            margin-top: 4px;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .autocomplete-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+            font-size: 13px;
+            transition: all 0.2s;
         }
+        .autocomplete-item:hover {
+            background: linear-gradient(90deg, rgba(168, 85, 247, 0.1), transparent);
+            color: #fff;
+            padding-left: 20px;
+        }
+        
+        .bg-error {
+             background: rgba(239, 68, 68, 0.1);
+             border: 1px solid rgba(239, 68, 68, 0.2);
+             color: #f87171;
+        }
+        
+        .hidden { display: none !important; }
     </style>
+<script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.run/@google/genai",
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.557.0"
+  }
+}
+</script>
 </head>
 <body>
 
     <!-- Background -->
-    <div class="bg-gradient-animate"></div>
+    <div class="bg-cyber"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
 
-    <!-- Auth View (Login/Register) -->
-    <section id="view-auth" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div class="glass w-full max-w-md p-8 rounded-3xl shadow-2xl border-t border-white/10 relative overflow-hidden">
-            <!-- Background Glow -->
-            <div class="absolute -top-20 -right-20 w-40 h-40 bg-purple-500/30 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-cyan-500/30 rounded-full blur-3xl pointer-events-none"></div>
+    <!-- API Key Modal (GATEKEEPER - Shows BEFORE Auth) -->
+    <div id="api-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-[#050511]/95 backdrop-blur-xl hidden">
+        <div class="glass-panel max-w-md w-full p-8 rounded-3xl border border-cyan-500/30 shadow-[0_0_50px_rgba(6,182,212,0.15)] relative animate-[fadeIn_0.4s_cubic-bezier(0.16,1,0.3,1)] overflow-hidden">
+            <!-- Decorative Elements -->
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500"></div>
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-cyan-500/10 blur-3xl rounded-full pointer-events-none"></div>
 
-            <div class="relative z-10">
-                <div class="flex flex-col items-center mb-8">
-                    <div class="w-16 h-16 bg-gradient-to-tr from-cyan-400 to-purple-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-purple-500/30">
-                        <i data-lucide="plane" class="w-8 h-8 text-white"></i>
-                    </div>
-                    <h1 class="text-3xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 to-purple-300">TravelGenie AI</h1>
-                    <p class="text-slate-400 text-center mt-2 text-sm">Đồng hành cùng bạn trên mọi nẻo đường</p>
+            <div class="text-center mb-8 relative z-10">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-b from-cyan-900/50 to-transparent border border-cyan-500/30 flex items-center justify-center relative">
+                    <div class="absolute inset-0 rounded-full border border-cyan-400/50 animate-[ping_2s_infinite]"></div>
+                    <i data-lucide="shield-alert" class="text-cyan-400 w-8 h-8"></i>
                 </div>
-
-                <!-- Tabs -->
-                <div class="flex bg-slate-800/50 rounded-xl p-1 mb-6">
-                    <button id="tab-login" class="flex-1 py-2 rounded-lg text-sm font-medium bg-white/10 text-white shadow-sm transition-all">Đăng Nhập</button>
-                    <button id="tab-register" class="flex-1 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white transition-all">Đăng Ký</button>
+                <h3 class="text-2xl font-bold text-white mb-2 tracking-tight">KÍCH HOẠT HỆ THỐNG</h3>
+                <p class="text-sm text-slate-400 leading-relaxed">
+                    Vui lòng nhập <b>Google Gemini API Key</b> để khởi động các tính năng AI Core trước khi đăng nhập.
+                </p>
+            </div>
+            
+            <form id="modal-api-form" class="space-y-6 relative z-10">
+                <div class="relative group">
+                    <div class="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-xl opacity-30 group-focus-within:opacity-100 transition duration-500 blur"></div>
+                    <div class="relative">
+                        <input type="password" id="modal-input-key" placeholder="Dán API Key của bạn vào đây..." class="w-full bg-[#0a0a1a] text-white px-4 py-4 rounded-xl text-sm border border-white/10 focus:outline-none font-mono">
+                        <i data-lucide="key" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 w-4 h-4"></i>
+                    </div>
                 </div>
-
-                <!-- Login Form -->
-                <form id="form-login" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1 ml-1">Email</label>
-                        <input type="email" id="login-email" placeholder="email@example.com" required 
-                            class="w-full glass-input px-4 py-3 rounded-xl text-sm placeholder-slate-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1 ml-1">Mật khẩu</label>
-                        <input type="password" id="login-password" placeholder="••••••••" required 
-                            class="w-full glass-input px-4 py-3 rounded-xl text-sm placeholder-slate-500">
-                    </div>
-                    <button type="submit" class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg shadow-cyan-500/25 mt-2">
-                        Đăng Nhập
+                
+                <div class="flex flex-col gap-3">
+                    <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-sm shadow-lg shadow-cyan-900/30 transition-all transform hover:-translate-y-0.5 uppercase tracking-widest flex items-center justify-center gap-2">
+                        <i data-lucide="power" class="w-4 h-4"></i> Kích Hoạt Ngay
                     </button>
-                </form>
-
-                <!-- Register Form -->
-                <form id="form-register" class="space-y-4 hidden">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1 ml-1">Họ và Tên</label>
-                        <input type="text" id="reg-name" placeholder="Nguyễn Văn A" required 
-                            class="w-full glass-input px-4 py-3 rounded-xl text-sm placeholder-slate-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1 ml-1">Email</label>
-                        <input type="email" id="reg-email" placeholder="email@example.com" required 
-                            class="w-full glass-input px-4 py-3 rounded-xl text-sm placeholder-slate-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1 ml-1">Mật khẩu</label>
-                        <input type="password" id="reg-password" placeholder="••••••••" required 
-                            class="w-full glass-input px-4 py-3 rounded-xl text-sm placeholder-slate-500">
-                    </div>
-                    <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg shadow-purple-500/25 mt-2">
-                        Tạo Tài Khoản
+                    
+                    <button type="button" onclick="closeApiModal()" class="w-full py-3 rounded-xl border border-white/10 hover:bg-white/5 text-slate-400 hover:text-white font-medium text-xs transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="x-circle" class="w-4 h-4"></i> Bỏ Qua (Chế Độ Offline)
                     </button>
-                </form>
-
-                <p id="auth-error" class="text-red-400 text-xs text-center mt-4 hidden"></p>
+                </div>
+            </form>
+            
+            <div class="mt-6 text-center border-t border-white/5 pt-4">
+                <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs text-cyan-400 hover:text-cyan-300 flex items-center justify-center gap-1 transition-colors">
+                    Chưa có Key? Lấy miễn phí tại đây <i data-lucide="external-link" class="w-3 h-3"></i>
+                </a>
             </div>
         </div>
-    </section>
+    </div>
+
+    <!-- Auth View -->
+    <div id="view-auth" class="min-h-screen flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-md p-8 rounded-3xl fade-in relative overflow-hidden neon-border">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500"></div>
+            
+            <div class="text-center mb-10">
+                <div class="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-white/10 flex items-center justify-center relative">
+                    <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-cyan-400 to-purple-500 opacity-20 blur-xl"></div>
+                    <i data-lucide="plane" class="text-white w-10 h-10 relative z-10"></i>
+                </div>
+                <h1 class="text-4xl font-bold text-white mb-2 tracking-tight">TravelGenie <span class="text-cyan-400 text-sm align-top">AI</span></h1>
+                <p class="text-slate-400 text-sm font-light tracking-wide">TRỢ LÝ DU LỊCH THẾ HỆ MỚI</p>
+            </div>
+
+            <div class="flex bg-black/20 p-1.5 rounded-xl mb-8 border border-white/5">
+                <button id="tab-login" class="flex-1 py-2.5 rounded-lg text-sm font-medium transition-all bg-white/10 text-white shadow-lg">Đăng Nhập</button>
+                <button id="tab-register" class="flex-1 py-2.5 rounded-lg text-sm font-medium transition-all text-slate-500 hover:text-white">Đăng Ký</button>
+            </div>
+
+            <form id="auth-form" class="space-y-5">
+                <div id="field-name" class="hidden animate-[fadeIn_0.3s]">
+                    <div class="relative group">
+                        <i data-lucide="user" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-4 h-4 group-focus-within:text-cyan-400 transition-colors"></i>
+                        <input type="text" id="input-name" placeholder="Họ tên hiển thị" class="glass-input w-full pl-12 pr-4 py-3.5 rounded-xl text-sm">
+                    </div>
+                </div>
+                <div class="relative group">
+                    <i data-lucide="mail" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-4 h-4 group-focus-within:text-cyan-400 transition-colors"></i>
+                    <input type="email" id="input-email" placeholder="Email định danh" required class="glass-input w-full pl-12 pr-4 py-3.5 rounded-xl text-sm">
+                </div>
+                <div class="relative group">
+                    <i data-lucide="lock" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-4 h-4 group-focus-within:text-cyan-400 transition-colors"></i>
+                    <input type="password" id="input-password" placeholder="Mật mã bảo vệ" required class="glass-input w-full pl-12 pr-4 py-3.5 rounded-xl text-sm">
+                </div>
+                
+                <p id="auth-error" class="text-red-400 text-xs text-center hidden bg-error py-3 rounded-lg flex items-center justify-center gap-2">
+                    <i data-lucide="alert-circle" class="w-3 h-3"></i> <span id="auth-error-text"></span>
+                </p>
+
+                <button type="submit" class="btn-primary w-full py-3.5 rounded-xl font-bold text-sm text-white shadow-lg shadow-purple-500/20 tracking-wide uppercase">
+                    <span id="btn-auth-text">Truy Cập Hệ Thống</span>
+                </button>
+            </form>
+        </div>
+    </div>
 
     <!-- App Container -->
-    <div id="app" class="relative min-h-screen flex flex-col hidden">
+    <div id="app-container" class="hidden flex-col min-h-screen">
         
         <!-- Navbar -->
-        <nav class="sticky top-0 z-40 w-full glass border-b border-white/5">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16">
-                    <!-- Logo -->
-                    <div class="flex items-center gap-2 cursor-pointer" onclick="window.navigateTo('home')">
-                        <div class="w-8 h-8 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-lg flex items-center justify-center">
-                            <i data-lucide="plane" class="w-5 h-5 text-white"></i>
-                        </div>
-                        <span class="font-bold text-xl tracking-tight">TravelGenie</span>
+        <nav class="sticky top-0 z-40 border-b border-white/5 bg-[#050511]/80 backdrop-blur-xl">
+            <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-3 cursor-pointer group" onclick="navigateTo('home')">
+                    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center group-hover:shadow-[0_0_15px_rgba(168,85,247,0.5)] transition-all">
+                        <i data-lucide="plane" class="text-white w-5 h-5"></i>
                     </div>
+                    <span class="font-bold text-xl tracking-tight hidden md:block">TravelGenie</span>
+                </div>
 
-                    <!-- Desktop Menu -->
-                    <div class="hidden md:flex items-center space-x-8">
-                        <a href="#" onclick="window.navigateTo('home')" class="nav-link text-sm font-medium text-white hover:text-cyan-400 transition-colors">Tìm kiếm</a>
-                        <a href="#" onclick="window.navigateTo('chat')" class="nav-link text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors">Trợ lý AI</a>
-                        <a href="#" onclick="window.navigateTo('profile')" class="nav-link text-sm font-medium text-slate-300 hover:text-cyan-400 transition-colors">Hồ sơ</a>
-                    </div>
-
-                    <!-- Mobile Menu Button & User -->
-                    <div class="flex items-center gap-4">
-                        <div id="user-indicator" class="hidden md:flex items-center gap-2 px-3 py-1.5 glass rounded-full border border-white/10">
-                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            <span id="nav-username" class="text-xs font-medium text-slate-300">Khách</span>
-                        </div>
-                        <button class="md:hidden text-slate-300 hover:text-white">
-                            <i data-lucide="menu" class="w-6 h-6"></i>
-                        </button>
-                    </div>
+                <div class="flex items-center gap-1 bg-white/5 p-1 rounded-xl border border-white/5">
+                    <button onclick="navigateTo('home')" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white transition-all" data-target="home">
+                        <i data-lucide="search" class="w-4 h-4"></i> <span class="hidden md:inline">Khám Phá</span>
+                    </button>
+                    <button onclick="navigateTo('chat')" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white transition-all" data-target="chat">
+                        <i data-lucide="message-square" class="w-4 h-4"></i> <span class="hidden md:inline">AI Chat</span>
+                    </button>
+                    <button onclick="navigateTo('profile')" class="nav-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white transition-all relative" data-target="profile">
+                        <i data-lucide="user" class="w-4 h-4"></i> <span class="hidden md:inline">Hồ Sơ</span>
+                        <span id="nav-status-dot" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-slate-500 border border-[#050511]"></span>
+                    </button>
                 </div>
             </div>
         </nav>
 
-        <!-- Main Content Area -->
+        <!-- Main Content -->
         <main class="flex-grow relative">
             
-            <!-- VIEW: HOME (Search) -->
-            <section id="view-home" class="view-section px-4 pt-10 pb-20">
-                <div class="max-w-4xl mx-auto text-center mb-12">
-                    <h1 class="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-purple-300 to-pink-300">
-                        Bạn muốn đi đâu tiếp theo?
+            <!-- Home View -->
+            <div id="view-home" class="view-section px-4 py-12 pb-24 fade-in">
+                <div class="max-w-4xl mx-auto text-center mb-14 relative">
+                    <div class="absolute -top-20 left-1/2 -translate-x-1/2 w-64 h-64 bg-purple-500/20 blur-[100px] rounded-full pointer-events-none"></div>
+                    <h1 class="text-5xl md:text-6xl font-bold mb-6 text-white leading-tight tracking-tight">
+                        Khám phá thế giới <br />
+                        <span class="text-gradient">Không giới hạn</span>
                     </h1>
-                    <p class="text-lg text-slate-400 max-w-2xl mx-auto">
-                        Tìm kiếm vé máy bay, tàu hỏa, xe buýt và khách sạn theo thời gian thực cùng AI.
+                    <p class="text-lg text-slate-400 max-w-xl mx-auto font-light">
+                        Công nghệ AI tối ưu hóa hành trình của bạn. Tìm vé máy bay, khách sạn với chi phí tốt nhất chỉ trong vài giây.
                     </p>
                 </div>
 
-                <!-- Search Box -->
-                <div class="max-w-5xl mx-auto glass p-6 md:p-8 rounded-3xl shadow-2xl border border-white/10 relative overflow-visible">
-                    <!-- Glow effect behind -->
-                    <div class="absolute -top-20 -right-20 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
-                    <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
-
-                    <form id="search-form" class="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-4">
-                        
-                        <!-- Type -->
-                        <div class="md:col-span-2 group">
-                            <label class="block text-xs font-medium text-slate-400 mb-1 ml-1">Loại hình</label>
+                <div class="max-w-5xl mx-auto glass-panel p-8 rounded-3xl border border-white/10 mb-20 shadow-2xl relative neon-border">
+                    <form id="search-form" class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                        <div class="col-span-1 group">
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Loại hình</label>
                             <div class="relative">
-                                <i data-lucide="layers" class="absolute left-3 top-3 w-5 h-5 text-slate-500 group-focus-within:text-pink-400 transition-colors z-10"></i>
-                                <select id="input-type" class="w-full glass-input pl-10 pr-4 py-3 rounded-xl text-sm focus:ring-0 appearance-none cursor-pointer relative z-0">
-                                    <option value="Flight" class="bg-slate-800">Máy Bay</option>
-                                    <option value="Train" class="bg-slate-800">Tàu Hỏa</option>
-                                    <option value="Bus" class="bg-slate-800">Xe Buýt</option>
-                                    <option value="Hotel" class="bg-slate-800">Khách Sạn</option>
+                                <select id="search-type" class="glass-input w-full px-4 py-3.5 rounded-xl text-sm appearance-none cursor-pointer">
+                                    <option value="Flight" class="bg-slate-900">✈️ Chuyến Bay</option>
+                                    <option value="Train" class="bg-slate-900">🚄 Tàu Hỏa</option>
+                                    <option value="Bus" class="bg-slate-900">🚌 Xe Khách</option>
+                                    <option value="Hotel" class="bg-slate-900">🏨 Lưu Trú</option>
                                 </select>
-                                <i data-lucide="chevron-down" class="absolute right-3 top-3 w-4 h-4 text-slate-500 pointer-events-none"></i>
+                                <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
                             </div>
                         </div>
-
-                        <!-- Origin (Hidden if Hotel) -->
-                        <div class="md:col-span-3 group transition-all duration-300" id="field-origin">
-                            <label class="block text-xs font-medium text-slate-400 mb-1 ml-1">Điểm đi</label>
-                            <div class="relative autocomplete">
-                                <i data-lucide="map-pin" class="absolute left-3 top-3 w-5 h-5 text-slate-500 group-focus-within:text-cyan-400 transition-colors"></i>
-                                <input type="text" id="input-origin" placeholder="Hà Nội, HCM..." 
-                                    class="w-full glass-input pl-10 pr-4 py-3 rounded-xl text-sm focus:ring-0" autocomplete="off">
-                                <!-- Suggestions rendered via JS -->
-                            </div>
-                        </div>
-
-                        <!-- Destination -->
-                        <div class="md:col-span-3 group transition-all duration-300" id="field-destination">
-                            <label class="block text-xs font-medium text-slate-400 mb-1 ml-1" id="label-destination">Điểm đến</label>
-                            <div class="relative autocomplete">
-                                <i data-lucide="navigation" class="absolute left-3 top-3 w-5 h-5 text-slate-500 group-focus-within:text-purple-400 transition-colors"></i>
-                                <input type="text" id="input-destination" placeholder="Đà Nẵng, Nha Trang..." required
-                                    class="w-full glass-input pl-10 pr-4 py-3 rounded-xl text-sm focus:ring-0" autocomplete="off">
-                                <!-- Suggestions rendered via JS -->
-                            </div>
-                        </div>
-
-                        <!-- Date -->
-                        <div class="md:col-span-2 group">
-                            <label class="block text-xs font-medium text-slate-400 mb-1 ml-1">Ngày</label>
+                        <div class="col-span-1 relative group" id="container-origin">
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Điểm Xuất Phát</label>
                             <div class="relative">
-                                <input type="date" id="input-date" required
-                                    class="w-full glass-input px-4 py-3 rounded-xl text-sm focus:ring-0 appearance-none text-slate-300">
+                                <i data-lucide="map-pin" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-cyan-400 transition-colors"></i>
+                                <input type="text" id="search-origin" placeholder="Hà Nội..." class="glass-input w-full pl-11 pr-4 py-3.5 rounded-xl text-sm" autocomplete="off">
+                                <div id="suggestions-origin" class="autocomplete-items hidden"></div>
                             </div>
                         </div>
-
-                        <!-- Button -->
-                        <div class="md:col-span-2 flex items-end" id="field-button">
-                            <button type="submit" id="btn-search" 
-                                class="w-full h-[46px] bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold rounded-xl transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2 group">
-                                <span class="group-hover:hidden">Tìm Kiếm</span>
-                                <span class="hidden group-hover:inline">Đi Thôi</span>
-                                <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                        <div class="col-span-1 relative group" id="container-destination">
+                            <label id="label-destination" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Điểm Đến</label>
+                            <div class="relative">
+                                <i data-lucide="map" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-purple-400 transition-colors"></i>
+                                <input type="text" id="search-destination" placeholder="Đà Nẵng..." required class="glass-input w-full pl-11 pr-4 py-3.5 rounded-xl text-sm" autocomplete="off">
+                                <div id="suggestions-destination" class="autocomplete-items hidden"></div>
+                            </div>
+                        </div>
+                        <div class="col-span-1 group">
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Thời Gian</label>
+                            <div class="relative">
+                                <input type="date" id="search-date" required class="glass-input w-full px-4 py-3.5 rounded-xl text-sm text-slate-300">
+                            </div>
+                        </div>
+                        <div class="md:col-span-4 flex justify-end mt-2">
+                            <button type="submit" class="btn-primary px-10 py-4 rounded-xl font-bold text-white shadow-lg text-sm uppercase tracking-widest flex items-center gap-2">
+                                <i data-lucide="search" class="w-4 h-4"></i> Tìm Kiếm Ngay
                             </button>
                         </div>
                     </form>
                 </div>
 
-                <!-- Features Grid (Decorative) -->
-                <div class="max-w-6xl mx-auto mt-20 grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="glass p-6 rounded-2xl border border-white/5">
-                        <div class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center mb-4 text-purple-400">
-                            <i data-lucide="zap" class="w-5 h-5"></i>
+                <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Feature Cards -->
+                    <div class="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-all duration-300 group">
+                        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-4 border border-purple-500/30 group-hover:scale-110 transition-transform">
+                            <i data-lucide="zap" class="text-purple-400"></i>
                         </div>
-                        <h3 class="text-lg font-semibold mb-2">AI Thông Minh</h3>
-                        <p class="text-slate-400 text-sm">Tự động tìm đường bay nối chuyến hoặc kết hợp xe khách nếu điểm đến không có sân bay.</p>
+                        <h3 class="text-lg font-bold mb-2 text-white group-hover:text-purple-300 transition-colors">Xử Lý Tốc Độ Cao</h3>
+                        <p class="text-sm text-slate-400">Thuật toán tối ưu hóa giúp tìm kiếm kết quả phù hợp nhất trong mili giây.</p>
                     </div>
-                    <div class="glass p-6 rounded-2xl border border-white/5">
-                        <div class="w-10 h-10 rounded-full bg-pink-500/20 flex items-center justify-center mb-4 text-pink-400">
-                            <i data-lucide="heart" class="w-5 h-5"></i>
+                    <div class="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-all duration-300 group">
+                        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-cyan-400/20 to-blue-500/20 flex items-center justify-center mb-4 border border-cyan-500/30 group-hover:scale-110 transition-transform">
+                            <i data-lucide="globe" class="text-cyan-400"></i>
                         </div>
-                        <h3 class="text-lg font-semibold mb-2">Cá Nhân Hóa</h3>
-                        <p class="text-slate-400 text-sm">Học hỏi sở thích để gợi ý những chuyến đi và khách sạn phù hợp nhất.</p>
+                        <h3 class="text-lg font-bold mb-2 text-white group-hover:text-cyan-300 transition-colors">Kết Nối Toàn Cầu</h3>
+                        <p class="text-sm text-slate-400">Deep-link trực tiếp đến các nền tảng đặt vé hàng đầu thế giới.</p>
                     </div>
-                    <div class="glass p-6 rounded-2xl border border-white/5">
-                        <div class="w-10 h-10 rounded-full bg-cyan-500/20 flex items-center justify-center mb-4 text-cyan-400">
-                            <i data-lucide="shield-check" class="w-5 h-5"></i>
+                    <div class="glass-panel p-6 rounded-2xl hover:bg-white/5 transition-all duration-300 group">
+                        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-emerald-400/20 to-teal-500/20 flex items-center justify-center mb-4 border border-emerald-500/30 group-hover:scale-110 transition-transform">
+                            <i data-lucide="cpu" class="text-emerald-400"></i>
                         </div>
-                        <h3 class="text-lg font-semibold mb-2">Nguồn Tin Cậy</h3>
-                        <p class="text-slate-400 text-sm">Dữ liệu minh bạch, liên kết trực tiếp đến nhà cung cấp dịch vụ.</p>
+                        <h3 class="text-lg font-bold mb-2 text-white group-hover:text-emerald-300 transition-colors">AI Core 2.0</h3>
+                        <p class="text-sm text-slate-400">Trợ lý ảo thông minh hỗ trợ giải đáp mọi thắc mắc về hành trình.</p>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <!-- VIEW: LOADING -->
-            <section id="view-loading" class="view-section hidden absolute inset-0 flex flex-col items-center justify-center z-50 bg-slate-900/50 backdrop-blur-sm min-h-[500px]">
+            <!-- Loading Overlay -->
+            <div id="loading-overlay" class="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-[#050511]/90 backdrop-blur-md hidden fade-in">
                 <div class="relative">
-                    <div class="w-20 h-20 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin"></div>
-                    <div class="absolute top-0 left-0 w-20 h-20 border-4 border-purple-500/30 border-b-purple-500 rounded-full animate-spin" style="animation-direction: reverse; animation-duration: 1.5s;"></div>
-                    <i data-lucide="plane" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-white animate-pulse"></i>
-                </div>
-                <h3 class="mt-8 text-xl font-medium text-white">Đang phân tích lộ trình...</h3>
-                <p id="loading-text" class="text-slate-400 mt-2 text-sm">Gemini đang tìm kiếm chuyến đi tốt nhất cho bạn</p>
-            </section>
-
-            <!-- VIEW: SEARCH RESULTS -->
-            <section id="view-results" class="view-section hidden px-4 py-8">
-                <div class="max-w-6xl mx-auto">
-                    <!-- Results Header -->
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                        <div>
-                            <button onclick="window.navigateTo('home')" class="flex items-center text-slate-400 hover:text-white mb-2 transition-colors">
-                                <i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> Quay lại tìm kiếm
-                            </button>
-                            <h2 class="text-2xl font-bold flex items-center gap-2">
-                                <span id="res-origin" class="text-slate-300">Điểm đi</span>
-                                <i data-lucide="arrow-right" class="w-5 h-5 text-slate-500"></i>
-                                <span id="res-destination" class="text-cyan-400">Điểm đến</span>
-                            </h2>
-                            <p class="text-sm text-slate-400 mt-1 flex items-center gap-2">
-                                <i data-lucide="calendar" class="w-3 h-3"></i> <span id="res-date">Ngày</span>
-                                <span class="mx-1">•</span>
-                                <span id="res-count">0 kết quả tìm thấy</span>
-                            </p>
-                        </div>
-                        
-                        <div class="flex gap-2">
-                            <button class="px-4 py-2 glass rounded-lg text-sm hover:bg-white/5 transition-colors">Rẻ nhất</button>
-                            <button class="px-4 py-2 bg-white/10 text-white rounded-lg text-sm border border-cyan-500/50">Nhanh nhất</button>
-                        </div>
-                    </div>
-
-                    <!-- Results Grid -->
-                    <div id="results-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Cards will be injected here via JS -->
-                    </div>
-
-                    <!-- Data Sources -->
-                    <div class="mt-12 p-6 glass rounded-2xl border border-white/5">
-                        <h4 class="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
-                            <i data-lucide="link" class="w-4 h-4"></i> Nguồn Dữ Liệu
-                        </h4>
-                        <div id="sources-list" class="flex flex-wrap gap-2 text-xs text-slate-500">
-                            <!-- Links injected here -->
-                        </div>
+                    <div class="w-20 h-20 border-t-2 border-b-2 border-cyan-400 rounded-full spin"></div>
+                    <div class="w-20 h-20 border-r-2 border-l-2 border-purple-500 rounded-full spin absolute inset-0 animation-delay-500" style="animation-direction: reverse;"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <i data-lucide="plane" class="w-6 h-6 text-white"></i>
                     </div>
                 </div>
-            </section>
+                <h3 class="text-xl font-bold mt-8 mb-2 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 animate-pulse">ĐANG QUÉT DỮ LIỆU...</h3>
+                <p class="text-slate-400 text-sm font-mono tracking-widest">CONNECTING TO PROVIDERS</p>
+            </div>
 
-            <!-- VIEW: AI CHAT -->
-            <section id="view-chat" class="view-section hidden h-[calc(100vh-64px)] flex flex-col">
-                <div class="flex-1 overflow-y-auto p-4 space-y-4 max-w-4xl mx-auto w-full" id="chat-messages">
-                    <!-- Welcome Message -->
-                    <div class="flex items-start gap-3">
-                        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-500 flex-shrink-0 flex items-center justify-center">
-                            <i data-lucide="bot" class="w-5 h-5 text-white"></i>
+            <!-- Results View -->
+            <div id="view-results" class="view-section hidden px-4 py-8 pb-24 fade-in">
+                <div class="max-w-7xl mx-auto">
+                    <button onclick="navigateTo('home')" class="group flex items-center text-slate-400 hover:text-cyan-400 mb-8 text-sm transition-colors uppercase tracking-wider font-bold">
+                        <i data-lucide="arrow-left" class="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform"></i> Quay lại
+                    </button>
+
+                    <div class="mb-10 p-6 glass-panel rounded-2xl border border-white/5 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-64 h-full bg-gradient-to-l from-purple-900/20 to-transparent"></div>
+                        <h2 class="text-2xl md:text-3xl font-bold flex flex-wrap items-center gap-4 mb-2 relative z-10">
+                            <span id="res-origin" class="text-slate-300">HAN</span>
+                            <div class="w-8 h-1 bg-gradient-to-r from-slate-700 to-slate-700 rounded-full overflow-hidden relative">
+                                <div class="absolute inset-0 bg-gradient-to-r from-cyan-400 to-purple-500 w-1/2 animate-[shimmer_2s_infinite]"></div>
+                            </div>
+                            <span id="res-destination" class="text-white">DAD</span>
+                        </h2>
+                        <div class="flex items-center gap-6 text-sm text-slate-400 font-mono mt-4">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="calendar" class="w-4 h-4 text-cyan-400"></i>
+                                <span id="res-date">2023-10-10</span>
+                            </div>
                         </div>
-                        <div class="glass p-4 rounded-2xl rounded-tl-none max-w-[80%] text-sm text-slate-200">
-                            Xin chào! Tôi là trợ lý du lịch AI của bạn. Hãy hỏi tôi về địa điểm, thủ tục visa, hoặc danh sách đồ cần chuẩn bị cho chuyến đi sắp tới nhé!
+
+                        <!-- REAL SEARCH LINKS -->
+                        <div id="real-search-links" class="mt-6 pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center text-yellow-400 pulse-glow">
+                                    <i data-lucide="external-link" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-yellow-400 text-sm uppercase tracking-wide">Dữ liệu thời gian thực</h4>
+                                    <p class="text-xs text-slate-400">Kết nối trực tiếp với đối tác để có giá chính xác nhất</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap gap-3" id="external-buttons-container">
+                                <!-- JS Injected -->
+                            </div>
                         </div>
                     </div>
+
+                    <div id="results-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- Tickets generated via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat View -->
+            <div id="view-chat" class="view-section hidden h-[calc(100vh-64px)] flex flex-col relative max-w-5xl mx-auto pt-4 md:pt-8">
+                <div id="chat-messages" class="flex-1 overflow-y-auto px-4 pb-4 space-y-6 scroll-smooth">
+                    <!-- Default msg will be here -->
                 </div>
 
-                <!-- Chat Input -->
-                <div class="p-4 border-t border-white/10 glass bg-slate-900/80">
-                    <form id="chat-form" class="max-w-4xl mx-auto relative flex gap-2">
-                        <input type="text" id="chat-input" placeholder="Hỏi Gemini..." 
-                            class="flex-1 glass-input px-4 py-3 rounded-xl focus:ring-0 text-sm">
-                        <button type="submit" class="bg-cyan-600 hover:bg-cyan-500 text-white p-3 rounded-xl transition-colors">
+                <div class="p-4 md:p-6 mt-auto bg-[#050511]/90 backdrop-blur-xl border-t border-white/10">
+                    <form id="chat-form" class="relative flex gap-3 items-center max-w-4xl mx-auto">
+                        <div class="relative flex-1 group">
+                            <input type="text" id="chat-input" placeholder="Nhập câu hỏi cho AI..." class="glass-input w-full pl-5 pr-12 py-4 rounded-xl text-sm focus:ring-2 focus:ring-purple-500/50" autocomplete="off">
+                            <div class="absolute inset-0 rounded-xl pointer-events-none border border-white/5 group-hover:border-white/10 transition-colors"></div>
+                        </div>
+                        <button type="submit" class="p-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-xl text-white shadow-lg hover:shadow-purple-500/40 hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                             <i data-lucide="send" class="w-5 h-5"></i>
                         </button>
                     </form>
+                    <p class="text-center text-[10px] text-slate-600 mt-2 uppercase tracking-wider">Powered by Gemini 2.5 Flash</p>
                 </div>
-            </section>
+            </div>
 
-            <!-- VIEW: PROFILE (Real Data) -->
-            <section id="view-profile" class="view-section hidden px-4 py-10">
-                <div class="max-w-2xl mx-auto glass rounded-3xl p-8 border border-white/10 text-center">
-                    <div class="w-24 h-24 bg-gradient-to-br from-pink-500 to-orange-400 rounded-full mx-auto mb-4 p-1">
-                        <img src="https://picsum.photos/200" alt="Avatar" class="w-full h-full rounded-full border-4 border-slate-900 object-cover">
-                    </div>
-                    <h2 id="profile-name" class="text-2xl font-bold text-white">User Name</h2>
-                    <p id="profile-email" class="text-slate-400 text-sm mb-6">user@example.com</p>
+            <!-- Profile View -->
+            <div id="view-profile" class="view-section hidden min-h-[80vh] flex items-center justify-center p-4 fade-in">
+                <div class="glass-panel w-full max-w-2xl rounded-3xl p-8 border border-white/10 relative overflow-hidden">
+                    <!-- Decor -->
+                    <div class="absolute -top-24 -right-24 w-48 h-48 bg-cyan-500/20 blur-[60px] rounded-full"></div>
+                    <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-purple-500/20 blur-[60px] rounded-full"></div>
                     
-                    <div class="grid grid-cols-2 gap-4 text-left mb-8">
-                        <div class="glass p-4 rounded-xl">
-                            <p class="text-xs text-slate-500 uppercase">Chuyến đi</p>
-                            <p class="text-2xl font-bold text-cyan-400">0</p>
+                    <div class="relative flex flex-col md:flex-row items-center gap-8 mb-10">
+                        <div class="w-28 h-28 rounded-full p-1 bg-gradient-to-br from-cyan-400 to-purple-500 shadow-[0_0_30px_rgba(168,85,247,0.3)]">
+                            <img src="https://picsum.photos/200/200" alt="Avatar" class="w-full h-full rounded-full object-cover border-4 border-[#050511]">
                         </div>
-                        <div class="glass p-4 rounded-xl">
-                            <p class="text-xs text-slate-500 uppercase">Đã lưu</p>
-                            <p class="text-2xl font-bold text-purple-400">0</p>
+                        <div class="text-center md:text-left">
+                            <h2 id="profile-name" class="text-3xl font-bold text-white mb-1">User Name</h2>
+                            <p id="profile-email" class="text-slate-400 text-sm font-mono bg-white/5 px-3 py-1 rounded-full inline-block">user@example.com</p>
                         </div>
                     </div>
-                    
-                    <button id="btn-logout" class="w-full py-3 glass rounded-xl text-red-400 hover:bg-red-500/10 transition-colors text-sm font-medium">
-                        Đăng Xuất
+
+                    <!-- AI Configuration Section -->
+                    <div class="bg-black/30 rounded-2xl p-6 border border-white/10 mb-8 relative overflow-hidden group">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-cyan-400 to-purple-500"></div>
+                        
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
+                                    <i data-lucide="cpu" class="text-cyan-400 w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-white text-sm uppercase tracking-wide">Trạng thái AI Core</h3>
+                                    <p id="profile-api-status" class="text-xs text-slate-400">Đang kiểm tra...</p>
+                                </div>
+                            </div>
+                            <div id="status-badge" class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-800 text-slate-400 border border-slate-700">
+                                OFFLINE
+                            </div>
+                        </div>
+
+                        <form id="profile-api-form" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Google Gemini API Key</label>
+                                <div class="relative">
+                                    <input type="password" id="profile-api-key" placeholder="Nhập API Key để kích hoạt tính năng thông minh..." class="glass-input w-full pl-10 pr-4 py-3 rounded-xl text-xs font-mono tracking-wide">
+                                    <i data-lucide="key" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600"></i>
+                                </div>
+                            </div>
+                            <div class="flex justify-end gap-3">
+                                <a href="https://aistudio.google.com/app/apikey" target="_blank" class="px-4 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-colors flex items-center gap-2">
+                                    Lấy Key <i data-lucide="external-link" class="w-3 h-3"></i>
+                                </a>
+                                <button type="submit" class="px-6 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-cyan-900/20">
+                                    Lưu Cấu Hình
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <button onclick="logout()" class="w-full py-3.5 rounded-xl border border-red-500/20 text-red-400 hover:bg-red-500/10 hover:text-red-300 hover:border-red-500/40 flex items-center justify-center gap-2 transition-all text-sm font-bold uppercase tracking-widest">
+                        <i data-lucide="log-out" class="w-4 h-4"></i> Đăng Xuất Hệ Thống
                     </button>
                 </div>
-            </section>
+            </div>
 
         </main>
     </div>
 
-    <!-- MAIN SCRIPT -->
+    <!-- Logic -->
     <script type="module">
         import { GoogleGenAI } from "https://esm.run/@google/genai";
 
-        // --- CONSTANTS & CONFIG ---
-        const API_KEYS = [
-                "AIzaSyB78pNkaqTKqa_hZtruMGOHsFzwam58b-g"
-        ];
-        let currentKeyIndex = 0;
-
-        const CITY_IMAGES = {
-            "Hanoi": "https://images.unsplash.com/photo-1555921015-5532091f6026?auto=format&fit=crop&w=800&q=80",
-            "Ha Noi": "https://images.unsplash.com/photo-1555921015-5532091f6026?auto=format&fit=crop&w=800&q=80",
-            "Hà Nội": "https://images.unsplash.com/photo-1555921015-5532091f6026?auto=format&fit=crop&w=800&q=80",
-            "Ho Chi Minh": "https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=800&q=80",
-            "Saigon": "https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=800&q=80",
-            "Hồ Chí Minh": "https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=800&q=80",
-            "Da Nang": "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=800&q=80",
-            "Danang": "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=800&q=80",
-            "Đà Nẵng": "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=800&q=80",
-            "Sapa": "https://images.unsplash.com/photo-1534057357497-69502b48995a?auto=format&fit=crop&w=800&q=80",
-            "Hoi An": "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=800&q=80",
-            "Hội An": "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=800&q=80",
-            "Phu Quoc": "https://images.unsplash.com/photo-1588665046200-c943891d4576?auto=format&fit=crop&w=800&q=80",
-            "Phú Quốc": "https://images.unsplash.com/photo-1588665046200-c943891d4576?auto=format&fit=crop&w=800&q=80",
-            "Ha Long": "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=800&q=80",
-            "Halong": "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=800&q=80",
-            "Hạ Long": "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=800&q=80",
-            "Nha Trang": "https://images.unsplash.com/photo-1565620958189-e962657e3352?auto=format&fit=crop&w=800&q=80",
-            "Can Tho": "https://images.unsplash.com/photo-1580587771525-78b9dba3b91d?auto=format&fit=crop&w=800&q=80",
-            "Cần Thơ": "https://images.unsplash.com/photo-1580587771525-78b9dba3b91d?auto=format&fit=crop&w=800&q=80",
-            "Ca Mau": "https://images.unsplash.com/photo-1580587771525-78b9dba3b91d?auto=format&fit=crop&w=800&q=80",
-            "Cà Mau": "https://images.unsplash.com/photo-1580587771525-78b9dba3b91d?auto=format&fit=crop&w=800&q=80",
-            "default": "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&q=80"
+        // Constants
+        const LOCATIONS = ["Hà Nội", "Hồ Chí Minh", "Đà Nẵng", "Hải Phòng", "Cần Thơ", "Phú Quốc", "Nha Trang", "Đà Lạt", "Huế", "Hội An", "Sapa", "Vũng Tàu", "Quy Nhơn", "Buôn Ma Thuột"];
+        const PROVIDERS = {
+            'Flight': ["Vietnam Airlines", "Vietjet Air", "Bamboo Airways"],
+            'Train': ["Vietnam Railways", "Livitrans Express"],
+            'Bus': ["Phương Trang", "Thành Bưởi", "Kumho Samco"],
+            'Hotel': ["InterContinental", "Sheraton", "Novotel", "Vinpearl", "Mường Thanh"]
         };
 
-        const VIETNAM_LOCATIONS = [
-            "Hà Nội (HAN)", "Hồ Chí Minh (SGN)", "Đà Nẵng (DAD)", "Hải Phòng (HPH)", "Cần Thơ (VCA)", 
-            "Phú Quốc (PQC)", "Nha Trang (CXR)", "Đà Lạt (DLI)", "Huế (HUI)", "Vinh (VII)", "Thanh Hóa (THD)",
-            "Đồng Hới (VDH)", "Chu Lai (VCL)", "Tuy Hòa (TBB)", "Quy Nhơn (UIH)", "Buôn Ma Thuột (BMV)",
-            "Pleiku (PXU)", "Côn Đảo (VCS)", "Điện Biên Phủ (DIN)", "Rạch Giá (VKG)", "Cà Mau (CAH)",
-            "Hải Dương", "Hưng Yên", "Nam Định", "Ninh Bình", "Thái Bình", "Vĩnh Phúc", "Hà Giang", 
-            "Cao Bằng", "Bắc Kạn", "Lạng Sơn", "Tuyên Quang", "Thái Nguyên", "Phú Thọ", "Bắc Giang", 
-            "Quảng Ninh", "Sapa (Lào Cai)", "Sơn La", "Hòa Bình", "Nghệ An", "Hà Tĩnh", "Quảng Bình", 
-            "Quảng Trị", "Quảng Nam (Hội An)", "Quảng Ngãi", "Bình Định", "Phú Yên", "Khánh Hòa", 
-            "Ninh Thuận", "Bình Thuận", "Kon Tum", "Gia Lai", "Đắk Lắk", "Đắk Nông", "Lâm Đồng", 
-            "Bình Phước", "Tây Ninh", "Bình Dương", "Đồng Nai", "Bà Rịa - Vũng Tàu", "Long An", 
-            "Tiền Giang", "Bến Tre", "Trà Vinh", "Vĩnh Long", "Đồng Tháp", "An Giang", "Kiên Giang", 
-            "Hậu Giang", "Sóc Trăng", "Bạc Liêu"
-        ];
-
-        // --- STATE MANAGEMENT ---
         const state = {
-            currentUser: null,
-            currentView: 'home',
-            searchData: null,
-            searchResults: []
+            user: null,
+            apiKey: localStorage.getItem('tg_api_key') || '',
+            isOffline: false,
+            currentView: 'auth'
         };
 
-        // --- DOM ELEMENTS ---
-        const elements = {
-            app: document.getElementById('app'),
-            viewAuth: document.getElementById('view-auth'),
-            
-            // Auth Elements
-            tabLogin: document.getElementById('tab-login'),
-            tabRegister: document.getElementById('tab-register'),
-            formLogin: document.getElementById('form-login'),
-            formRegister: document.getElementById('form-register'),
-            authError: document.getElementById('auth-error'),
-            
-            // Main Views
-            views: {
-                home: document.getElementById('view-home'),
-                results: document.getElementById('view-results'),
-                chat: document.getElementById('view-chat'),
-                profile: document.getElementById('view-profile'),
-                loading: document.getElementById('view-loading')
-            },
-            
-            // Search Form
-            searchForm: document.getElementById('search-form'),
-            inputType: document.getElementById('input-type'),
-            fieldOrigin: document.getElementById('field-origin'),
-            inputOrigin: document.getElementById('input-origin'),
-            fieldDestination: document.getElementById('field-destination'),
-            labelDestination: document.getElementById('label-destination'),
-            inputDestination: document.getElementById('input-destination'),
-            fieldButton: document.getElementById('field-button'),
-            inputDate: document.getElementById('input-date'),
-            
-            // Results & Chat
-            resultsContainer: document.getElementById('results-container'),
-            chatForm: document.getElementById('chat-form'),
-            chatInput: document.getElementById('chat-input'),
-            chatMessages: document.getElementById('chat-messages'),
-            resOrigin: document.getElementById('res-origin'),
-            resDest: document.getElementById('res-destination'),
-            resDate: document.getElementById('res-date'),
-            resCount: document.getElementById('res-count'),
-            sourcesList: document.getElementById('sources-list'),
-            
-            // Profile Info
-            profileName: document.getElementById('profile-name'),
-            profileEmail: document.getElementById('profile-email'),
-            navUsername: document.getElementById('nav-username'),
-            btnLogout: document.getElementById('btn-logout')
-        };
+        let genAI = null;
+        let chatSession = null;
 
-        // --- GENAI WRAPPER (AUTO ROTATION) ---
-        async function callGeminiSafe(params) {
-            let lastError = null;
-            
-            for (let i = 0; i < API_KEYS.length; i++) {
-                const tryIndex = (currentKeyIndex + i) % API_KEYS.length;
-                const apiKey = API_KEYS[tryIndex];
-                
-                try {
-                    const ai = new GoogleGenAI({ apiKey: apiKey });
-                    const response = await ai.models.generateContent(params);
-                    currentKeyIndex = tryIndex;
-                    return response;
-                } catch (error) {
-                    console.warn(`Key ...${apiKey.slice(-4)} failed (Index: ${tryIndex}). Trying next...`, error);
-                    lastError = error;
-                }
-            }
-            throw lastError;
-        }
+        // --- Core Functions ---
 
-        // --- AUTH LOGIC ---
-        function loadUsers() {
-            const users = localStorage.getItem('tg_users');
-            return users ? JSON.parse(users) : [];
-        }
-
-        function saveUser(user) {
-            const users = loadUsers();
-            users.push(user);
-            localStorage.setItem('tg_users', JSON.stringify(users));
-        }
-
-        function findUser(email) {
-            const users = loadUsers();
-            return users.find(u => u.email === email);
-        }
-
-        function login(email, password) {
-            const user = findUser(email);
-            if (user && user.password === password) {
-                state.currentUser = user;
-                localStorage.setItem('tg_current_user', JSON.stringify(user));
-                updateAuthUI();
+        function initGemini(key) {
+            if (!key) return false;
+            try {
+                genAI = new GoogleGenAI({ apiKey: key });
+                chatSession = genAI.chats.create({
+                    model: 'gemini-2.5-flash',
+                    config: { systemInstruction: "Bạn là TravelGenie, trợ lý du lịch chuyên nghiệp. Trả lời ngắn gọn, thân thiện bằng tiếng Việt." }
+                });
+                state.apiKey = key;
+                localStorage.setItem('tg_api_key', key);
+                state.isOffline = false;
+                updateStatusUI(true);
                 return true;
+            } catch (e) {
+                console.error("Init failed", e);
+                return false;
             }
-            return false;
         }
 
-        function logout() {
-            state.currentUser = null;
-            localStorage.removeItem('tg_current_user');
-            updateAuthUI();
-        }
-
-        function updateAuthUI() {
-            if (state.currentUser) {
-                elements.viewAuth.classList.add('hidden');
-                elements.app.classList.remove('hidden');
-                elements.navUsername.textContent = state.currentUser.name;
-                elements.profileName.textContent = state.currentUser.name;
-                elements.profileEmail.textContent = state.currentUser.email;
-                window.navigateTo('home');
+        function checkGatekeeper() {
+            // Check API Key immediately
+            const storedKey = localStorage.getItem('tg_api_key');
+            if (storedKey) {
+                state.apiKey = storedKey;
+                initGemini(storedKey);
+                document.getElementById('api-modal').classList.add('hidden');
             } else {
-                elements.viewAuth.classList.remove('hidden');
-                elements.app.classList.add('hidden');
+                // Force show modal if no key
+                document.getElementById('api-modal').classList.remove('hidden');
             }
         }
 
-        // --- NAVIGATION ---
-        window.navigateTo = function(viewName) {
-            // Hide all views
-            Object.values(elements.views).forEach(el => el.classList.add('hidden'));
-            
-            // Show target view
-            if (elements.views[viewName]) {
-                elements.views[viewName].classList.remove('hidden');
-                state.currentView = viewName;
-                
-                // Active state for nav links (simple implementation)
-                document.querySelectorAll('.nav-link').forEach(link => {
-                    link.classList.remove('text-cyan-400', 'text-white');
-                    link.classList.add('text-slate-300');
-                });
+        function updateStatusUI(isOnline) {
+            // Navbar dot
+            const navDot = document.getElementById('nav-status-dot');
+            if (isOnline) {
+                navDot.className = "absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981] border border-[#050511]";
+            } else {
+                navDot.className = "absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 border border-[#050511]";
             }
-            lucide.createIcons();
+
+            // Profile status
+            const badge = document.getElementById('status-badge');
+            const text = document.getElementById('profile-api-status');
+            
+            if (badge && text) {
+                if (isOnline) {
+                    badge.className = "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.2)]";
+                    badge.textContent = "ONLINE";
+                    text.textContent = "Hệ thống đã kết nối Gemini AI";
+                    text.className = "text-xs text-emerald-400";
+                } else {
+                    badge.className = "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-500/10 text-red-400 border border-red-500/30";
+                    badge.textContent = "OFFLINE";
+                    text.textContent = "Chưa kết nối API Key";
+                    text.className = "text-xs text-slate-400";
+                }
+            }
+            
+            // Sync Input in Profile
+            const profileInput = document.getElementById('profile-api-key');
+            if (profileInput) profileInput.value = state.apiKey;
+        }
+
+        window.closeApiModal = function() {
+            document.getElementById('api-modal').classList.add('hidden');
+            state.isOffline = true;
+            updateStatusUI(false);
+            // Intro message for offline mode
+            addBotMessage("Tôi đang hoạt động ở chế độ Offline. Tôi chỉ có thể trả lời các câu hỏi cơ bản hoặc bạn có thể dùng tính năng Tìm Kiếm.");
         };
 
-        // --- SEARCH LOGIC ---
-        function handleTypeChange() {
-            const type = elements.inputType.value;
-            const destInput = elements.inputDestination;
-            
-            if (type === 'Hotel') {
-                elements.fieldOrigin.classList.add('hidden', 'md:hidden');
-                // Expand Destination to fill space
-                elements.fieldDestination.classList.remove('md:col-span-3');
-                elements.fieldDestination.classList.add('md:col-span-6');
-                
-                elements.labelDestination.textContent = "Bạn muốn ở đâu?";
-                destInput.placeholder = "Tên thành phố, khu vực...";
-            } else {
-                elements.fieldOrigin.classList.remove('hidden', 'md:hidden');
-                elements.fieldDestination.classList.remove('md:col-span-6');
-                elements.fieldDestination.classList.add('md:col-span-3');
-                
-                elements.labelDestination.textContent = "Điểm đến";
-                destInput.placeholder = "Đà Nẵng, Nha Trang...";
-            }
-        }
-
-        function setupAutocomplete(inp) {
-            let currentFocus;
-            inp.addEventListener("input", function(e) {
-                let a, b, i, val = this.value;
-                closeAllLists();
-                if (!val) { return false; }
-                currentFocus = -1;
-                a = document.createElement("DIV");
-                a.setAttribute("id", this.id + "autocomplete-list");
-                a.setAttribute("class", "autocomplete-items");
-                this.parentNode.appendChild(a);
-                
-                let count = 0;
-                for (i = 0; i < VIETNAM_LOCATIONS.length; i++) {
-                    if (VIETNAM_LOCATIONS[i].toUpperCase().includes(val.toUpperCase()) && count < 6) {
-                        b = document.createElement("DIV");
-                        b.setAttribute("class", "autocomplete-item");
-                        b.innerHTML = "<strong>" + VIETNAM_LOCATIONS[i].substr(0, val.length) + "</strong>";
-                        b.innerHTML += VIETNAM_LOCATIONS[i].substr(val.length);
-                        b.innerHTML += "<input type='hidden' value='" + VIETNAM_LOCATIONS[i] + "'>";
-                        b.addEventListener("click", function(e) {
-                            inp.value = this.getElementsByTagName("input")[0].value;
-                            closeAllLists();
-                        });
-                        a.appendChild(b);
-                        count++;
-                    }
-                }
-            });
-            function closeAllLists(elmnt) {
-                var x = document.getElementsByClassName("autocomplete-items");
-                for (var i = 0; i < x.length; i++) {
-                    if (elmnt != x[i] && elmnt != inp) {
-                        x[i].parentNode.removeChild(x[i]);
-                    }
-                }
-            }
-            document.addEventListener("click", function (e) {
-                closeAllLists(e.target);
-            });
-        }
-
-        function getCityImage(city) {
-            // Simple normalization to match keys
-            for (const key in CITY_IMAGES) {
-                if (city.toLowerCase().includes(key.toLowerCase())) {
-                    return CITY_IMAGES[key];
-                }
-            }
-            return CITY_IMAGES['default'];
-        }
-
-        async function searchRealTimeTickets(origin, destination, date, type) {
-            const isHotel = type === 'Hotel';
-            
-            let systemInstruction = `
-            You are a travel booking engine API that outputs ONLY raw JSON.
-            Task: Search for real-time ${type} options ${isHotel ? `in ${destination}` : `from ${origin} to ${destination}`} on ${date}.
-            
-            IMPORTANT RULES:
-            1. Return a JSON array. Each object must have: provider, time (departure/arrival or check-in/out), price (in VND), rating (1-5), link (booking url), and type.
-            2. If ${type} is 'Flight' and the destination '${destination}' does NOT have a commercial airport or is difficult to reach directly:
-               - You MUST suggest a "Combo" route: Flight to the nearest major airport + Bus/Taxi to final destination.
-               - In the 'provider' field, write something like: "Vietnam Airlines + Xe Khách Phương Trang".
-               - In the 'type' field, write: "Flight + Bus".
-               - Clearly explain the route in a 'notes' field if necessary.
-            3. Use the Google Search tool to find REAL prices and schedules for ${date}.
-            4. Do not wrap the JSON in markdown code blocks. Just raw JSON.
-            `;
-
-            const prompt = `Find 5 best ${type} options. ${isHotel ? `Location: ${destination}` : `Route: ${origin} -> ${destination}`}. Date: ${date}. Currency: VND.`;
-
-            try {
-                const result = await callGeminiSafe({
-                    model: "gemini-2.5-flash",
-                    contents: [{ role: "user", parts: [{ text: prompt }] }],
-                    config: {
-                        systemInstruction: systemInstruction,
-                        tools: [{ googleSearch: {} }]
-                    }
-                });
-
-                // Extract data
-                const groundingChunks = result.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
-                const sources = groundingChunks
-                    .map(c => c.web?.uri ? `<a href="${c.web.uri}" target="_blank" class="hover:text-cyan-400 underline">${c.web.title || 'Source'}</a>` : '')
-                    .filter(Boolean);
-
-                let jsonText = result.response.text.trim();
-                // Clean up markdown if present
-                if (jsonText.startsWith('```json')) {
-                    jsonText = jsonText.replace(/^```json\n/, '').replace(/\n```$/, '');
-                } else if (jsonText.startsWith('```')) {
-                    jsonText = jsonText.replace(/^```\n/, '').replace(/\n```$/, '');
-                }
-
-                const tickets = JSON.parse(jsonText);
-                return { tickets, sources };
-
-            } catch (error) {
-                console.error("Search Error:", error);
-                throw error;
-            }
-        }
-
-        // --- UI RENDERING ---
-        function renderResults(data, origin, destination, date, type) {
-            elements.resultsContainer.innerHTML = '';
-            elements.sourcesList.innerHTML = data.sources.join(' • ') || 'Dữ liệu tổng hợp từ AI';
-            
-            elements.resOrigin.textContent = type === 'Hotel' ? 'Khách sạn tại' : origin;
-            elements.resDest.textContent = destination;
-            elements.resDate.textContent = date;
-            elements.resCount.textContent = `${data.tickets.length} kết quả`;
-
-            const destImage = getCityImage(destination);
-
-            data.tickets.forEach(ticket => {
-                const card = document.createElement('div');
-                card.className = 'glass-card rounded-2xl overflow-hidden flex flex-col';
-                
-                const isCombo = ticket.type && ticket.type.includes('+');
-                
-                card.innerHTML = `
-                    <div class="h-32 bg-cover bg-center relative" style="background-image: url('${destImage}')">
-                        <div class="absolute inset-0 bg-black/40"></div>
-                        <div class="absolute bottom-3 left-4 text-white">
-                            <p class="text-xs font-bold bg-cyan-500/80 px-2 py-1 rounded mb-1 w-max">${ticket.provider}</p>
-                            <p class="text-xs opacity-80">${ticket.time}</p>
-                        </div>
-                        ${isCombo ? '<div class="absolute top-3 right-3 bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded shadow-lg">Combo Đa Chặng</div>' : ''}
-                    </div>
-                    <div class="p-4 flex-grow flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="font-bold text-lg text-white">${ticket.type || type}</h3>
-                                <div class="flex items-center text-yellow-400 text-xs gap-1">
-                                    <i data-lucide="star" class="w-3 h-3 fill-current"></i>
-                                    <span>${ticket.rating || '4.5'}</span>
-                                </div>
-                            </div>
-                            <p class="text-2xl font-bold text-cyan-400 mb-4">${ticket.price}</p>
-                            ${ticket.notes ? `<p class="text-xs text-slate-400 mb-3 bg-white/5 p-2 rounded">${ticket.notes}</p>` : ''}
-                        </div>
-                        <a href="${ticket.link || '#'}" target="_blank" class="block w-full text-center py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium transition-colors">Đặt Ngay</a>
-                    </div>
-                `;
-                elements.resultsContainer.appendChild(card);
-            });
-            lucide.createIcons();
-            window.navigateTo('results');
-        }
-
-        // --- CHAT LOGIC ---
-        async function handleChat(e) {
-            e.preventDefault();
-            const message = elements.chatInput.value.trim();
-            if (!message) return;
-
-            // Add User Message
-            appendMessage('user', message);
-            elements.chatInput.value = '';
-
-            try {
-                // Add Loading Message
-                const loadingId = appendMessage('ai', 'Đang nhập...', true);
-
-                const result = await callGeminiSafe({
-                    model: "gemini-2.5-flash",
-                    contents: [{ role: "user", parts: [{ text: message }] }]
-                });
-
-                const response = result.response.text;
-                
-                // Remove loading, add real message
-                document.getElementById(loadingId).remove();
-                appendMessage('ai', response);
-
-            } catch (error) {
-                console.error(error);
-                appendMessage('ai', "Xin lỗi, tôi đang gặp sự cố kết nối.");
-            }
-        }
-
-        function appendMessage(role, text, isLoading = false) {
+        function addBotMessage(text) {
+            const chatBox = document.getElementById('chat-messages');
+            if(!chatBox) return;
             const div = document.createElement('div');
-            div.className = `flex items-start gap-3 ${role === 'user' ? 'flex-row-reverse' : ''}`;
-            if (isLoading) div.id = 'msg-' + Date.now();
-
-            const avatar = role === 'ai' 
-                ? `<div class="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-500 flex-shrink-0 flex items-center justify-center"><i data-lucide="bot" class="w-5 h-5 text-white"></i></div>`
-                : `<div class="w-8 h-8 rounded-full bg-slate-700 flex-shrink-0 flex items-center justify-center"><i data-lucide="user" class="w-5 h-5 text-white"></i></div>`;
-
+            div.className = 'flex items-start gap-4 animate-[fadeIn_0.3s]';
             div.innerHTML = `
-                ${avatar}
-                <div class="glass p-4 rounded-2xl ${role === 'user' ? 'rounded-tr-none bg-cyan-900/30' : 'rounded-tl-none'} max-w-[80%] text-sm text-slate-200">
-                    ${isLoading ? '<div class="flex gap-1"><span class="w-1 h-1 bg-white rounded-full animate-bounce"></span><span class="w-1 h-1 bg-white rounded-full animate-bounce" style="animation-delay: 0.1s"></span><span class="w-1 h-1 bg-white rounded-full animate-bounce" style="animation-delay: 0.2s"></span></div>' : text}
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400/20 to-purple-500/20 border border-white/10 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="bot" class="text-cyan-400 w-5 h-5"></i>
+                </div>
+                <div class="glass-panel px-6 py-4 rounded-2xl rounded-tl-none max-w-[85%] text-sm leading-relaxed text-slate-200 shadow-lg">
+                    ${text}
                 </div>
             `;
-            elements.chatMessages.appendChild(div);
-            elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
             lucide.createIcons();
-            return div.id;
         }
 
-        // --- EVENT LISTENERS ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // Init Icons
-            lucide.createIcons();
+        // --- Mock Data ---
+        function generateTickets(type, origin, dest, date) {
+            const count = Math.floor(Math.random() * 5) + 3;
+            const tickets = [];
+            const providerList = PROVIDERS[type] || PROVIDERS['Flight'];
             
-            // Check Auth
-            const storedUser = localStorage.getItem('tg_current_user');
-            if (storedUser) {
-                state.currentUser = JSON.parse(storedUser);
+            for(let i=0; i<count; i++) {
+                const price = (Math.floor(Math.random() * 200) + 50) * 10000;
+                const h = Math.floor(Math.random() * 14) + 6;
+                const m = Math.floor(Math.random() * 6) * 10;
+                const time = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
+                
+                let link = '#';
+                if(type === 'Flight') link = `https://www.google.com/search?q=vé+máy+bay+${origin}+đi+${dest}+${date}`;
+                else if(type === 'Hotel') link = `https://www.google.com/search?q=khách+sạn+tại+${dest}+${date}`;
+                else link = `https://www.google.com/search?q=vé+${type === 'Train'?'tàu':'xe'}+${origin}+đi+${dest}`;
+
+                tickets.push({
+                    provider: providerList[Math.floor(Math.random() * providerList.length)],
+                    time, price: new Intl.NumberFormat('vi-VN', {style: 'currency', currency: 'VND'}).format(price),
+                    link, type
+                });
+            }
+            return tickets.sort((a,b) => parseFloat(a.price) - parseFloat(b.price));
+        }
+
+        // --- View Navigation ---
+        window.navigateTo = function(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`view-${viewId}`).classList.remove('hidden');
+            
+            // Navbar state
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if(btn.dataset.target === viewId) {
+                    btn.classList.add('bg-white/10', 'text-white');
+                    btn.classList.remove('text-slate-400');
+                } else {
+                    btn.classList.remove('bg-white/10', 'text-white');
+                    btn.classList.add('text-slate-400');
+                }
+            });
+            lucide.createIcons();
+        };
+
+        function updateAuthUI() {
+            if (state.user) {
+                document.getElementById('view-auth').classList.add('hidden');
+                document.getElementById('app-container').classList.remove('hidden');
+                document.getElementById('app-container').classList.add('flex');
+                
+                document.getElementById('profile-name').textContent = state.user.name;
+                document.getElementById('profile-email').textContent = state.user.email;
+                
+                navigateTo('home');
+            } else {
+                document.getElementById('app-container').classList.add('hidden');
+                document.getElementById('app-container').classList.remove('flex');
+                document.getElementById('view-auth').classList.remove('hidden');
+            }
+        }
+        
+        function showError(msg) {
+            const el = document.getElementById('auth-error');
+            const txt = document.getElementById('auth-error-text');
+            if(msg) {
+                el.classList.remove('hidden');
+                txt.textContent = msg;
+            } else {
+                el.classList.add('hidden');
+            }
+        }
+
+        // --- Event Listeners ---
+
+        // Auth
+        document.getElementById('auth-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('input-email').value;
+            const password = document.getElementById('input-password').value;
+            const name = document.getElementById('input-name').value;
+            const isLogin = document.getElementById('field-name').classList.contains('hidden');
+            
+            // Load Users DB
+            const usersDB = JSON.parse(localStorage.getItem('tg_users_db') || '[]');
+            
+            if (isLogin) {
+                // LOGIN LOGIC
+                const user = usersDB.find(u => u.email === email && u.password === password);
+                if (user) {
+                    state.user = user;
+                    localStorage.setItem('tg_user', JSON.stringify(state.user));
+                    showError('');
+                    updateAuthUI();
+                } else {
+                    showError('Email hoặc mật khẩu không chính xác.');
+                }
+            } else {
+                // REGISTER LOGIC
+                if (usersDB.find(u => u.email === email)) {
+                    showError('Email này đã được đăng ký!');
+                    return;
+                }
+                
+                const newUser = { name, email, password };
+                usersDB.push(newUser);
+                localStorage.setItem('tg_users_db', JSON.stringify(usersDB));
+                
+                // Auto login
+                state.user = newUser;
+                localStorage.setItem('tg_user', JSON.stringify(state.user));
+                showError('');
                 updateAuthUI();
             }
-
-            // Set Date to Today
-            elements.inputDate.valueAsDate = new Date();
-
-            // Autocomplete Setup
-            setupAutocomplete(elements.inputOrigin);
-            setupAutocomplete(elements.inputDestination);
-
-            // Auth Tabs
-            elements.tabLogin.addEventListener('click', () => {
-                elements.tabLogin.classList.replace('text-slate-400', 'text-white');
-                elements.tabLogin.classList.add('bg-white/10');
-                elements.tabRegister.classList.replace('text-white', 'text-slate-400');
-                elements.tabRegister.classList.remove('bg-white/10');
-                elements.formLogin.classList.remove('hidden');
-                elements.formRegister.classList.add('hidden');
-                elements.authError.classList.add('hidden');
-            });
-
-            elements.tabRegister.addEventListener('click', () => {
-                elements.tabRegister.classList.replace('text-slate-400', 'text-white');
-                elements.tabRegister.classList.add('bg-white/10');
-                elements.tabLogin.classList.replace('text-white', 'text-slate-400');
-                elements.tabLogin.classList.remove('bg-white/10');
-                elements.formRegister.classList.remove('hidden');
-                elements.formLogin.classList.add('hidden');
-                elements.authError.classList.add('hidden');
-            });
-
-            // Auth Submit
-            elements.formLogin.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const email = document.getElementById('login-email').value;
-                const pass = document.getElementById('login-password').value;
-                if (!login(email, pass)) {
-                    elements.authError.textContent = "Email hoặc mật khẩu không đúng!";
-                    elements.authError.classList.remove('hidden');
-                }
-            });
-
-            elements.formRegister.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const name = document.getElementById('reg-name').value;
-                const email = document.getElementById('reg-email').value;
-                const pass = document.getElementById('reg-password').value;
-                
-                if (findUser(email)) {
-                    elements.authError.textContent = "Email đã tồn tại!";
-                    elements.authError.classList.remove('hidden');
-                    return;
-                }
-
-                saveUser({ name, email, password: pass });
-                login(email, pass);
-            });
-
-            // Logout
-            elements.btnLogout.addEventListener('click', logout);
-
-            // Search Type Change
-            elements.inputType.addEventListener('change', handleTypeChange);
-            handleTypeChange(); // Init state
-
-            // Search Submit
-            elements.searchForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const type = elements.inputType.value;
-                const origin = elements.inputOrigin.value;
-                const destination = elements.inputDestination.value;
-                const date = elements.inputDate.value;
-
-                if (type !== 'Hotel' && !origin) {
-                    alert("Vui lòng nhập điểm đi");
-                    return;
-                }
-
-                // Show Loading
-                elements.views.home.classList.add('hidden');
-                elements.views.loading.classList.remove('hidden');
-                
-                try {
-                    const data = await searchRealTimeTickets(origin, destination, date, type);
-                    state.searchData = data;
-                    elements.views.loading.classList.add('hidden');
-                    renderResults(data, origin, destination, date, type);
-                } catch (err) {
-                    console.error(err);
-                    elements.views.loading.classList.add('hidden');
-                    elements.views.home.classList.remove('hidden');
-                    alert("có thể trang web hết api key free nên bạn không thể tìm kiếm được =))) khi nào bạn cho tôi tiền mua api thì sẽ xịn hơn");
-                }
-            });
-
-            // Chat Submit
-            elements.chatForm.addEventListener('submit', handleChat);
+        });
+        
+        document.getElementById('tab-register').addEventListener('click', () => {
+            document.getElementById('field-name').classList.remove('hidden');
+            document.getElementById('btn-auth-text').textContent = 'Đăng Ký Tài Khoản';
+            document.getElementById('tab-register').className = "flex-1 py-2.5 rounded-lg text-sm font-medium transition-all bg-white/10 text-white shadow-lg";
+            document.getElementById('tab-login').className = "flex-1 py-2.5 rounded-lg text-sm font-medium transition-all text-slate-500 hover:text-white";
+            showError('');
+        });
+        
+        document.getElementById('tab-login').addEventListener('click', () => {
+            document.getElementById('field-name').classList.add('hidden');
+            document.getElementById('btn-auth-text').textContent = 'Truy Cập Hệ Thống';
+            document.getElementById('tab-login').className = "flex-1 py-2.5 rounded-lg text-sm font-medium transition-all bg-white/10 text-white shadow-lg";
+            document.getElementById('tab-register').className = "flex-1 py-2.5 rounded-lg text-sm font-medium transition-all text-slate-500 hover:text-white";
+            showError('');
         });
 
+        window.logout = function() {
+            localStorage.removeItem('tg_user');
+            state.user = null;
+            updateAuthUI();
+        };
+
+        // Modal API Form
+        document.getElementById('modal-api-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const key = document.getElementById('modal-input-key').value.trim();
+            if(key) {
+                if(initGemini(key)) {
+                    document.getElementById('api-modal').classList.add('hidden');
+                    addBotMessage("Hệ thống Online. Tôi đã sẵn sàng hỗ trợ bạn!");
+                } else {
+                    alert("Key không hợp lệ!");
+                }
+            }
+        });
+
+        // Profile API Form
+        document.getElementById('profile-api-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const key = document.getElementById('profile-api-key').value.trim();
+            if(key) {
+                if(initGemini(key)) {
+                    alert("Đã lưu và kết nối thành công!");
+                } else {
+                    alert("Kết nối thất bại. Vui lòng kiểm tra lại Key.");
+                }
+            }
+        });
+
+        // Search
+        document.getElementById('search-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            document.getElementById('loading-overlay').classList.remove('hidden');
+            
+            const origin = document.getElementById('search-origin').value;
+            const dest = document.getElementById('search-destination').value;
+            const date = document.getElementById('search-date').value;
+            const type = document.getElementById('search-type').value;
+
+            // Deep Links Generation
+            const container = document.getElementById('external-buttons-container');
+            container.innerHTML = '';
+            
+            const btnClass = "px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 hover:-translate-y-1 shadow-md uppercase tracking-wider";
+            
+            // Google Link
+            const googleLink = document.createElement('a');
+            googleLink.target = "_blank";
+            googleLink.className = `${btnClass} bg-white text-slate-900 hover:bg-slate-200`;
+            googleLink.innerHTML = `<img src="https://www.google.com/favicon.ico" class="w-3 h-3"> Google Search`;
+            
+            if (type === 'Flight') googleLink.href = `https://www.google.com/search?q=vé+máy+bay+${origin}+đi+${dest}+${date}`;
+            else if (type === 'Hotel') googleLink.href = `https://www.google.com/search?q=khách+sạn+tại+${dest}+${date}`;
+            else googleLink.href = `https://www.google.com/search?q=vé+${type === 'Train'?'tàu':'xe'}+${origin}+đi+${dest}`;
+            
+            container.appendChild(googleLink);
+
+            await new Promise(r => setTimeout(r, 2000)); // Fake delay
+            
+            // Render Tickets
+            const tickets = generateTickets(type, origin, dest, date);
+            const grid = document.getElementById('results-grid');
+            grid.innerHTML = '';
+            
+            document.getElementById('res-origin').textContent = origin || 'Điểm đi';
+            document.getElementById('res-destination').textContent = dest;
+            document.getElementById('res-date').textContent = date;
+
+            tickets.forEach(t => {
+                const el = document.createElement('div');
+                el.className = 'glass-panel rounded-2xl overflow-hidden flex flex-col group hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(168,85,247,0.2)] transition-all duration-300 border border-white/5 relative';
+                el.innerHTML = `
+                    <div class="h-32 bg-gradient-to-br from-indigo-900 to-purple-900 p-5 relative flex flex-col justify-end group-hover:from-indigo-800 group-hover:to-purple-800 transition-colors">
+                        <div class="absolute top-4 right-4 px-2 py-1 bg-black/30 rounded text-[10px] font-mono text-white/70 border border-white/10">${t.provider}</div>
+                        <p class="text-white font-bold text-lg relative z-10 tracking-tight">${t.time}</p>
+                        <p class="text-white/60 text-xs relative z-10 font-mono">Direct Flight</p>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between bg-[#0a0a1a]">
+                        <div class="mb-4">
+                            <p class="text-xs text-slate-500 uppercase tracking-widest mb-1">Giá Vé</p>
+                            <p class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">${t.price}</p>
+                        </div>
+                        <a href="${t.link}" target="_blank" class="block w-full text-center py-3 rounded-xl text-xs font-bold border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500 hover:text-white transition-all uppercase tracking-widest hover:shadow-[0_0_15px_rgba(6,182,212,0.4)]">
+                            Đặt Ngay
+                        </a>
+                    </div>
+                `;
+                grid.appendChild(el);
+            });
+
+            document.getElementById('loading-overlay').classList.add('hidden');
+            navigateTo('results');
+        });
+
+        // Chat
+        document.getElementById('chat-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if(!text) return;
+
+            // User UI
+            const chatBox = document.getElementById('chat-messages');
+            const userDiv = document.createElement('div');
+            userDiv.className = 'flex items-start gap-4 flex-row-reverse animate-[fadeIn_0.3s]';
+            userDiv.innerHTML = `
+                <div class="w-10 h-10 rounded-xl bg-slate-800 border border-white/10 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="user" class="text-slate-400 w-5 h-5"></i>
+                </div>
+                <div class="glass-panel px-6 py-4 rounded-2xl rounded-tr-none max-w-[85%] text-sm leading-relaxed text-white border-purple-500/20 bg-purple-500/5">
+                    ${text}
+                </div>
+            `;
+            chatBox.appendChild(userDiv);
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+            lucide.createIcons();
+
+            // Bot UI
+            let reply = "";
+            if (!state.isOffline && chatSession) {
+                const loadingId = 'loading-' + Date.now();
+                const loadDiv = document.createElement('div');
+                loadDiv.id = loadingId;
+                loadDiv.className = 'flex items-start gap-4 animate-pulse';
+                loadDiv.innerHTML = `
+                   <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400/20 to-purple-500/20 flex items-center justify-center flex-shrink-0"><i data-lucide="loader" class="text-cyan-400 w-5 h-5 spin"></i></div>
+                   <div class="glass-panel px-6 py-4 rounded-2xl rounded-tl-none w-32 h-12"></div>
+                `;
+                chatBox.appendChild(loadDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+                lucide.createIcons();
+
+                try {
+                    const result = await chatSession.sendMessage({ message: text });
+                    reply = result.text;
+                } catch(err) {
+                    reply = "Xin lỗi, kết nối AI bị gián đoạn. Vui lòng kiểm tra lại Key hoặc thử lại sau.";
+                }
+                document.getElementById(loadingId).remove();
+            } else {
+                // Offline Logic
+                await new Promise(r => setTimeout(r, 500));
+                const lower = text.toLowerCase();
+                if(lower.includes('giá') || lower.includes('vé')) reply = "Bạn vui lòng dùng tính năng 'Khám Phá' để xem giá vé cập nhật từ Google nhé.";
+                else if(lower.includes('chào')) reply = "Chào bạn! Tôi đang ở chế độ Offline. Tôi có thể giúp bạn tìm kiếm chuyến đi.";
+                else reply = "Tôi đang offline nên kiến thức hạn chế. Hãy nhập API Key trong phần Hồ Sơ để tôi thông minh hơn nhé!";
+            }
+
+            const botDiv = document.createElement('div');
+            botDiv.className = 'flex items-start gap-4 animate-[fadeIn_0.3s]';
+            botDiv.innerHTML = `
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400/20 to-purple-500/20 border border-white/10 flex items-center justify-center flex-shrink-0 shadow-[0_0_15px_rgba(168,85,247,0.2)]">
+                    <i data-lucide="bot" class="text-cyan-400 w-5 h-5"></i>
+                </div>
+                <div class="glass-panel px-6 py-4 rounded-2xl rounded-tl-none max-w-[85%] text-sm leading-relaxed text-slate-200 shadow-lg">
+                    ${reply.replace(/\n/g, '<br>')}
+                </div>
+            `;
+            chatBox.appendChild(botDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            lucide.createIcons();
+        });
+
+        // Autocomplete
+        function setupAutocomplete(inpId, listId) {
+            const inp = document.getElementById(inpId);
+            const list = document.getElementById(listId);
+            
+            inp.addEventListener('input', () => {
+                const val = inp.value.toLowerCase();
+                list.innerHTML = '';
+                if(!val) { list.classList.add('hidden'); return; }
+                const filtered = LOCATIONS.filter(l => l.toLowerCase().includes(val));
+                if(filtered.length === 0) { list.classList.add('hidden'); return; }
+                
+                list.classList.remove('hidden');
+                filtered.forEach(loc => {
+                    const d = document.createElement('div');
+                    d.className = 'autocomplete-item';
+                    d.textContent = loc;
+                    d.onclick = () => { inp.value = loc; list.classList.add('hidden'); };
+                    list.appendChild(d);
+                });
+            });
+            document.addEventListener('click', e => {
+                if(e.target !== inp && e.target !== list) list.classList.add('hidden');
+            });
+        }
+
+        // Init
+        (function() {
+            lucide.createIcons();
+            
+            // 1. Check Gatekeeper (API Key)
+            checkGatekeeper();
+
+            // 2. Check User Session
+            const storedUser = localStorage.getItem('tg_user');
+            if(storedUser) {
+                state.user = JSON.parse(storedUser);
+                updateAuthUI();
+            } else {
+                updateAuthUI();
+            }
+            
+            setupAutocomplete('search-origin', 'suggestions-origin');
+            setupAutocomplete('search-destination', 'suggestions-destination');
+            document.getElementById('search-date').valueAsDate = new Date();
+        })();
     </script>
- 
 </body>
-
 </html>
-
